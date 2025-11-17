@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 interface SetupFormProps {
   onComplete: (names: string[]) => void
 }
-export function SetupForm() {
+export function SetupForm({ onComplete }: SetupFormProps) {
   const [step, setStep] = useState(1)
   const [count, setCount] = useState<number>(2)
   const [names, setNames] = useState<string[]>([])
@@ -28,16 +28,16 @@ export function SetupForm() {
     e.preventDefault()
     // Check if all names are filled
     if (names.some((name) => !name.trim())) {
-      setError('Please enter all names')
-      return
+      setError('Please enter all names');
+      return;
     }
     // Check for duplicate names
     const uniqueNames = new Set(names.map((n) => n.trim().toLowerCase()))
     if (uniqueNames.size !== names.length) {
       setError('Each person must have a unique name')
-      return
+      return;
     }
-    // onComplete(names)
+    onComplete(names);
   }
   return (
     <div className="bg-white p-6 rounded-lg shadow-md m-6 min-w-[70%]">
