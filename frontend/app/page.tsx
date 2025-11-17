@@ -9,7 +9,7 @@ import { CleaningSchedule } from "./components/CleaningSchedule";
 export default function Home() {
   const [isSetup, setIsSetup] = useState(false);
   const [roommates, setRoommates] = useState<string[]>([]);
-  
+
   function handleSetupComplete(names: string[]): void {
     setRoommates(names);
     setIsSetup(true);
@@ -24,23 +24,23 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen items-center justify-center ">
-      <Header /> 
+      <Header />
       {!isSetup ? (
-        <SetupForm onComplete={ handleSetupComplete } />
+        <SetupForm onComplete={handleSetupComplete} />
       ) : (
         <>
-            <CleaningSchedule roommates={roommates} />
-            <div className="mt-8 text-center">
-              <button
-                onClick={handleReset}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-              >
-                Reset Roster
-              </button>
-            </div>
-          </>
+          <CleaningSchedule roommates={roommates} />
+          <div className="mt-8 text-center">
+            <button
+              onClick={handleReset}
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+            >
+              Reset Roster
+            </button>
+          </div>
+        </>
       )
-    }
+      }
     </div>
   );
 }
