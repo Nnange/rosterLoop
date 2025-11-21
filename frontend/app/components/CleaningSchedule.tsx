@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     generateYearlySchedule,
     getWeekNumber,
@@ -38,7 +38,7 @@ export function CleaningSchedule({ roommates }: CleaningScheduleProps) {
         <>
             <MonthlyCalendar schedule={schedule} currentWeek={currentWeek} />
 
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div className="bg-white rounded-lg shadow-md overflow-hidden min-w-[70%]">
                 <div className="p-6 border-b">
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">
                         Cleaning Schedule
