@@ -60,7 +60,7 @@ export function MonthlyCalendar({
     setDisplayYear(today.getFullYear())
   }
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+    <div className="bg-white rounded-lg shadow-md p-6 mb-6 lg:w-[50%]">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xl font-semibold">{monthName}</h3>
         <div className="flex items-center gap-2">
