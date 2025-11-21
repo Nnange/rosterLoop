@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import { SetupForm } from "./components/SetupForm";
 import { useState } from "react";
 import { CleaningSchedule } from "./components/CleaningSchedule";
+import Footer from "./components/Footer";
 
 export default function Home() {
   const [isSetup, setIsSetup] = useState(false);
@@ -23,7 +24,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center ">
+    <div className="flex flex-col min-h-screen items-center justify-center pt-8 ">
       <Header />
       {!isSetup ? (
         <SetupForm onComplete={handleSetupComplete} />
@@ -41,6 +42,7 @@ export default function Home() {
         </>
       )
       }
+      <Footer />
     </div>
   );
 }
