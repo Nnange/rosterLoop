@@ -10,6 +10,8 @@ pipeline {
     environment {
         IMAGE_NAME = "rosterloop-frontend"
         CONTAINER_NAME = "rosterloop-frontend-app"
+        FRONTEND_DIR = "frontend"
+        BACKEND_DIR = "backend"
     }
 
     stages {
@@ -21,8 +23,10 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh "docker build -t ${IMAGE_NAME}:latest ."
+                dir(FRONTEND_DIR) {
+                    script {
+                        sh "docker build -t ${IMAGE_NAME}:latest ."
+                    }
                 }
             }
         }
