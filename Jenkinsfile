@@ -8,8 +8,8 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME = "rosterLoop-frontend"
-        CONTAINER_NAME = "rosterLoop-frontend-app"
+        IMAGE_NAME = "rosterloop-frontend"
+        CONTAINER_NAME = "rosterloop-frontend-app"
     }
 
     stages {
@@ -46,7 +46,7 @@ pipeline {
                     sh """
                     docker run -d \
                       --name ${CONTAINER_NAME} \
-                      -p 8080:80 \
+                      -p 3002:80 \
                       ${IMAGE_NAME}:latest
                     """
                 }
