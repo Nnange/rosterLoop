@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image";
 import Header from "./components/Header";
 import { SetupForm } from "./components/SetupForm";
 import { useState } from "react";
@@ -15,6 +14,8 @@ export default function Home() {
     setRoommates(names);
     setIsSetup(true);
     localStorage.setItem('roommates', JSON.stringify(names))
+
+    // TODO: Send data to backend 
   }
 
   function handleReset(): void {

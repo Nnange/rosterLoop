@@ -35,7 +35,7 @@ export function CleaningSchedule({ roommates }: CleaningScheduleProps) {
             ?.person || 'Loading...'
 
     return (
-        <>
+
         <div className='flex flex-col lg:px-6 lg:flex-row lg:space-x-6 lg:justify-center lg:items-start lg:w-full'>
             <MonthlyCalendar schedule={schedule} currentWeek={currentWeek} />
 
@@ -131,6 +131,6 @@ export function CleaningSchedule({ roommates }: CleaningScheduleProps) {
                 </div>
             </div>
         </div>
-        </>
+
     )
 }
