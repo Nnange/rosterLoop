@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { getWeekNumber } from '../utils/scheduleGenerator'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 interface MonthlyCalendarProps {
@@ -11,7 +11,7 @@ interface MonthlyCalendarProps {
 export function MonthlyCalendar({
   schedule,
   currentWeek,
-}: MonthlyCalendarProps) {
+}: Readonly<MonthlyCalendarProps>) {
   const today = new Date()
   const [displayMonth, setDisplayMonth] = useState(today.getMonth())
   const [displayYear, setDisplayYear] = useState(today.getFullYear())

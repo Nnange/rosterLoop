@@ -11,7 +11,7 @@ import { MonthlyCalendar } from './MonthlyCalendar';
 interface CleaningScheduleProps {
     roommates: string[]
 }
-export function CleaningSchedule({ roommates }: CleaningScheduleProps) {
+export function CleaningSchedule({ roommates }: Readonly<CleaningScheduleProps>) {
     const [schedule, setSchedule] = useState<
         Array<{
             date: Date

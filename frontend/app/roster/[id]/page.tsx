@@ -1,28 +1,32 @@
-
 'use client';
-
-import {use} from "react";
-
-// Function to generate all static slugs at build time
-// export async function generateStaticParams() {
-//   // Replace this with your actual data fetching logic (API call, database query, etc.)
-//   // This runs during the 'next build' process.
-//   const posts = await fetch('https://api.example.com/rosters').then((res) => res.json());
-
-//   // Return an array of objects, where each object matches the dynamic segment name
-//   return posts.map((post: { id: string; title: string; }) => ({
-//     slug: post.id, // The 'slug' property name must match the folder name '[slug]'
-//   }));
-
-//   // Example of hardcoded values for testing:
-//   // return [{ slug: 'john-doe' }, { slug: 'jane-smith' }];
-// }
+import { CleaningSchedule } from "@/app/components/CleaningSchedule";
+import Footer from "@/app/components/Footer";
+import Header from "@/app/components/Header";
+import {use, useEffect, useState} from "react";
 
 
 export default function RosterPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
+    const [roommates, setRoommates] = useState<string[]>([]);
+
+
+    useEffect(() => {
+        // Fetch roommates from localStorage or backend
+        const storedRoommates = localStorage.getItem('roommates');
+        if (storedRoommates) {
+            setRoommates(JSON.parse(storedRoommates));
+        } else {
+            const roommatesName: string[] = ['Alice', 'Bob', 'Charlie']; // Default names
+            setRoommates(roommatesName); 
+        } 
+    }, []);
+
   return (
-    <h1 className="text-orange-500">Roster ID: {id}</h1>
+    <>
+        <Header />
+        <CleaningSchedule roommates={roommates} />
+        <Footer />
+    </>
 );
 }
 
