@@ -2,29 +2,18 @@
 
 import Header from "./components/Header";
 import { SetupForm } from "./components/SetupForm";
-import { useState } from "react";
-import { CleaningSchedule } from "./components/CleaningSchedule";
 import Footer from "./components/Footer";
 import { useRouter } from "next/navigation";
+import { createHousehold } from "./utils/api";
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Home() {
-  const [isSetup, setIsSetup] = useState(false);
-  const [roommates, setRoommates] = useState<string[]>([]);
   const router = useRouter();
 
-  function handleSetupComplete(names: string[]): void {
-    setRoommates(names);
-    setIsSetup(true);
-    localStorage.setItem('roommates', JSON.stringify(names))
-    router.push(`/roster/main-roster`);
-
-    // TODO: Send data to backend 
-  }
-
-  function handleReset(): void {
-    localStorage.removeItem('roommates');
-    setRoommates([]);
-    setIsSetup(false);
+  async function handleSetupComplete(flatmateNames: string[]): Promise<void> {
+    let id = uuidv4();
+    await createHousehold(id, flatmateNames);
+    router.push(`/roster/${id}`);
   }
 
   return (

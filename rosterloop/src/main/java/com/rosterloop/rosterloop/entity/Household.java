@@ -11,7 +11,6 @@ import java.util.UUID;
 @Table(name = "households")
 public class Household {
     @Id
-    @GeneratedValue(generator = "UUID")
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 

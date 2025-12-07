@@ -3,6 +3,7 @@ import { CleaningSchedule } from "@/app/components/CleaningSchedule";
 import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
 import {use, useEffect, useState} from "react";
+import { getHouseholdById } from "@/app/utils/api";
 
 
 export default function RosterPage({ params }: { params: Promise<{ id: string }> }) {
@@ -11,14 +12,16 @@ export default function RosterPage({ params }: { params: Promise<{ id: string }>
 
 
     useEffect(() => {
-        // Fetch roommates from localStorage or backend
-        const storedRoommates = localStorage.getItem('roommates');
-        if (storedRoommates) {
-            setRoommates(JSON.parse(storedRoommates));
-        } else {
-            const roommatesName: string[] = ['Alice', 'Bob', 'Charlie']; // Default names
-            setRoommates(roommatesName); 
-        } 
+        const fetchData = async () => {
+            try {
+                const data = await getHouseholdById(id);
+                console.log('Fetched household data:', data);
+                setRoommates(data.flatmateNames);
+            } catch (error) {
+                console.error('Error fetching household data:', error);
+            }
+        }
+        fetchData();
     }, []);
 
   return (
