@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./rosterloop-backend
+      dockerfile: Dockerfile
+    image: rosterloop-backend:latest
+    container_name: rosterloop_backend
+    environment:
+      - SPRING_PROFILE=${SPRING_PROFILE:-dev}
+    depends_on:
+      - frontend
+    ports:
+      - "9092:9092"
+    restart: unless-stopped
+    networks:
+      - football_football-network
+
+  frontend:
+    image: rosterloop-frontend:latest
+    build:
+      context: ./rosterloop-frontend
+      dockerfile: Dockerfile
+    container_name: rosterloop_frontend
+    volumes:
+      - /home/akweh/Documents/rosterloopEnv/.env.${SPRING_PROFILE}:/app/.env:ro
+    ports:
+      - "3002:80"
+    restart: unless-stopped
+    networks:
+      - football_football-network
+
+networks:
+  football_football-network:
+    external: true

@@ -3,8 +3,9 @@
 import React, { useState } from 'react'
 interface SetupFormProps {
     onComplete: (names: string[]) => void
+    onBack?: () => void
 }
-export function SetupForm({ onComplete }: SetupFormProps) {
+export function SetupForm({ onComplete, onBack }: Readonly<SetupFormProps>) {
     const [step, setStep] = useState(1)
     const [count, setCount] = useState<number>(2)
     const [names, setNames] = useState<string[]>([])
@@ -15,7 +16,7 @@ export function SetupForm({ onComplete }: SetupFormProps) {
             setError('Please enter at least 1 person')
             return
         }
-        setNames(Array(count).fill(''))
+        setNames(new Array(count).fill(''))
         setStep(2)
         setError('')
     }
@@ -52,17 +53,28 @@ export function SetupForm({ onComplete }: SetupFormProps) {
                                 type="number"
                                 min="1"
                                 value={count}
-                                onChange={(e) => setCount(parseInt(e.target.value) || 0)}
+                                onChange={(e) => setCount(Number.parseInt(e.target.value) || 0)}
                                 className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
                             />
                         </div>
                         {error && <p className="text-red-500 mb-4">{error}</p>}
-                        <button
-                            type="submit"
-                            className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition-colors"
-                        >
-                            Next
-                        </button>
+                        <div className="flex gap-3">
+                            {onBack && (
+                                <button
+                                    type="button"
+                                    onClick={onBack}
+                                    className="flex-1 bg-gray-600 text-white py-2 rounded hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
+                                >
+                                    <span>←</span> Back
+                                </button>
+                            )}
+                            <button
+                                type="submit"
+                                className={`${onBack ? 'flex-1' : 'w-full'} bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition-colors`}
+                            >
+                                Next
+                            </button>
+                        </div>
                     </form>
                 </div>
             )}

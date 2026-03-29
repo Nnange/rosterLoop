@@ -1,0 +1,79 @@
+Core Features & Enhancements
+    1. User Authentication & Authorization
+        Allow users to create accounts and log in
+        Share household rosters with other members via invite codes
+        Track who created/manages the household
+        Role-based permissions (admin can modify schedule, members can only view)
+    2. Enhanced Schedule Management
+        Manual Schedule Adjustments: Allow swaps between flatmates ("Can I swap my week with yours?")
+        Skip/Excuse System: Let someone skip a week due to travel/illness with administrator approval
+        Custom Rotation Rules:
+        Exclude certain people from specific weeks
+        Weight assignments based on frequency (some people clean more/less)
+        Support bi-weekly or monthly rotations instead of just weekly
+        Multi-day Assignments: Assign different rooms/areas to different people for the same weekend
+    3. Notifications & Reminders
+        Email/SMS reminders 48 hours before cleaning assignment
+        In-app notifications dashboard
+        Slack/Discord integration for notifications
+        Reminder frequency customization (daily, day-before, etc.)
+    4. Task Management & Checklists
+        Define cleaning tasks for each rotation (bathroom, kitchen, living room, etc.)
+        Checklist system to track completion
+        Photo verification of completed tasks
+        Task difficulty levels affecting point systems
+    5. Performance & Accountability Tracking
+        Completion Tracking: Mark when tasks are complete
+        Ratings System: Rate flatmates' cleaning quality (1-5 stars)
+        Leaderboard: Show who completes tasks on time most consistently
+        Penalty System: Track missed or incomplete cleanings
+        Reports: Generate monthly/quarterly cleaning performance reports
+    6. Social & Gamification Features
+        Points/Achievement System: Earn badges for consecutive on-time cleanings
+        Streaks: Track consecutive weeks of completed tasks
+        Rewards: Suggest rewards for high performers (movie night, dinner, etc.)
+        Team Chat: Built-in messaging for household members
+    7. Financial Integration
+        Track who owes money for cleaning supplies purchased communally
+        Split bills for shared household expenses
+        Fine system for missed cleanings (optional)
+        Expense sharing calculator
+    8. Mobile App
+        Native mobile app (React Native/Flutter) for quick access on-the-go
+        Offline capability to check who's cleaning this week
+        Push notifications directly to phone
+    9. Analytics & Insights
+        Dashboard showing cleaning trends
+        Heatmaps of busy seasons
+        Per-person statistics (avg. completion time, missed cleanings, etc.)
+        Export reports as PDF/CSV
+    10. Advanced Customization
+        Theme/Branding: Allow households to customize colors, logo, household name
+        Custom Holidays: Exclude specific dates (holidays, everyone traveling)
+        Seasonal Adjustments: Different schedules for different seasons
+        Import/Export: Backup and restore household data
+    11. Administrative Tools
+        Bulk import flatmates from CSV
+        Schedule templates for common household sizes
+        Audit logs of all changes made to the schedule
+        Data retention and cleanup policies
+    12. Integration & APIs
+        Google Calendar Integration: Sync schedule with personal calendars
+        Third-party Calendars: iCal export for Apple Calendar, Outlook, etc.
+        Webhook Support: Trigger external actions when assignments change
+        Public API: Allow other apps to read household schedules
+    13. Quality of Life Features
+        Dark Mode: Reduce eye strain for late-night browsing
+        Multi-language Support: Translations for international users
+        Accessibility: WCAG compliance, screen reader support
+        Mobile Responsive: Already partially done, but full mobile optimization
+    14. Conflict Resolution
+        Dispute Resolution System: When someone challenges an assignment
+        Voting System: Vote on schedule changes
+        Comments/Notes: Add notes to specific weeks
+        History Tracking: See previous schedules and changes
+    15. Advanced Scheduling Algorithms
+        ML-based Optimization: Learn preferences and optimize accordingly
+        Fair Balancing: Ensure no one gets weekend clusters (multiple consecutive weeks)
+        Preference Engine: Allow people to mark preferred/disliked dates
+        Capacity Planning: Consider who's available/unavailable

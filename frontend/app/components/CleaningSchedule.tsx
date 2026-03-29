@@ -39,7 +39,7 @@ export function CleaningSchedule({ roommates }: Readonly<CleaningScheduleProps>)
         <div className='flex flex-col lg:px-6 lg:flex-row lg:space-x-6 lg:justify-center lg:items-start lg:w-full'>
             <MonthlyCalendar schedule={schedule} currentWeek={currentWeek} />
 
-            <div className="bg-white rounded-lg shadow-md overflow-hidden lg: w-[50%]">
+            <div className="bg-white rounded-lg shadow-md overflow-hidden lg:w-[50%] mb-6">
                 <div className="p-6 border-b">
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">
                         Cleaning Schedule
