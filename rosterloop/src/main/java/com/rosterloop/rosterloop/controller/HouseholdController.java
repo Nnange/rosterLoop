@@ -5,6 +5,9 @@ import com.rosterloop.rosterloop.entity.HouseholdMember;
 import com.rosterloop.rosterloop.entity.User;
 import com.rosterloop.rosterloop.repository.HouseholdMemberRepository;
 import com.rosterloop.rosterloop.repository.HouseholdRepository;
+import com.rosterloop.rosterloop.repository.HouseholdInvitationRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,12 +21,17 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/rosterloop/api/households")
 public class HouseholdController {
+    private static final Logger logger = LoggerFactory.getLogger(HouseholdController.class);
     private final HouseholdRepository householdRepository;
     private final HouseholdMemberRepository householdMemberRepository;
+    private final HouseholdInvitationRepository householdInvitationRepository;
 
-    public HouseholdController(HouseholdRepository householdRepository, HouseholdMemberRepository householdMemberRepository) {
+    public HouseholdController(HouseholdRepository householdRepository, 
+                            HouseholdMemberRepository householdMemberRepository,
+                            HouseholdInvitationRepository householdInvitationRepository) {
         this.householdRepository = householdRepository;
         this.householdMemberRepository = householdMemberRepository;
+        this.householdInvitationRepository = householdInvitationRepository;
     }
 
     @GetMapping("/member/status")
@@ -161,7 +169,7 @@ public class HouseholdController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteHousehold(@PathVariable UUID id, Authentication authentication) {
+    public ResponseEntity<DeleteHouseholdResponse> deleteHousehold(@PathVariable UUID id, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -175,10 +183,31 @@ public class HouseholdController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
+            // Check if household has members and delete them first
+            List<HouseholdMember> members = householdMemberRepository.findByHouseholdId(id);
+            logger.info("Found {} members in household {}", members.size(), id);
+            
+            if (!members.isEmpty()) {
+                householdMemberRepository.deleteAll(members);
+                logger.info("Successfully deleted {} members from household {}", members.size(), id);
+            }
+
+            // Delete any invitations related to this household
+            var invitations = householdInvitationRepository.findByHouseholdId(id);
+            if (!invitations.isEmpty()) {
+                householdInvitationRepository.deleteAll(invitations);
+                logger.info("Successfully deleted {} invitations from household {}", invitations.size(), id);
+            }
+
+            // Now delete the household
             householdRepository.delete(household);
-            return ResponseEntity.noContent().build();
+            logger.info("Successfully deleted household {}", id);
+            
+            return ResponseEntity.ok(new DeleteHouseholdResponse(true, "Household deleted successfully"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            logger.error("Error deleting household: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new DeleteHouseholdResponse(false, "Error deleting household: " + e.getMessage()));
         }
     }
 
@@ -191,6 +220,24 @@ public class HouseholdController {
 
         public boolean isHasMembership() {
             return hasMembership;
+        }
+    }
+
+    public static class DeleteHouseholdResponse {
+        private final boolean success;
+        private final String message;
+
+        public DeleteHouseholdResponse(boolean success, String message) {
+            this.success = success;
+            this.message = message;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public String getMessage() {
+            return message;
         }
     }
 }

@@ -122,22 +122,45 @@ export default function HouseholdsPage() {
 
     setIsDeleting(true);
     try {
+      console.log('Deleting household:', householdToDelete.id);
+      console.log('Token:', token ? 'Present' : 'Missing');
+      
       const response = await fetch(
         `http://localhost:8080/rosterloop/api/households/${householdToDelete.id}`,
         {
           method: 'DELETE',
           headers: {
             Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
         }
       );
 
+      console.log('Delete response status:', response.status);
+
       if (response.ok) {
+        const data = await response.json();
+        console.log('Delete response:', data);
+        
         setHouseholds(households.filter(h => h.id !== householdToDelete.id));
         setDeleteModalOpen(false);
         setHouseholdToDelete(null);
+        setSuccess(data.message || 'Household deleted successfully');
       } else {
-        setError('Failed to delete household');
+        let errorMessage = `Failed to delete household (Status: ${response.status})`;
+        
+        try {
+          const errorData = await response.json();
+          if (errorData.message) {
+            errorMessage = errorData.message;
+          }
+        } catch (parseError) {
+          // Response wasn't JSON, use default error message
+          console.error('Could not parse error response as JSON');
+        }
+        
+        console.error('Delete failed with status:', response.status);
+        setError(errorMessage);
       }
     } catch (err) {
       setError('Error deleting household');
@@ -299,7 +322,7 @@ export default function HouseholdsPage() {
                         href={`/roster/${household.id}`}
                         className="px-3 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
                       >
-                        View Roster
+                        View
                       </Link>
                     </div>
                   </div>
