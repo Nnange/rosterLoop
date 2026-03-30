@@ -5,6 +5,8 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import Header from '@/app/components/Header'
 import { checkMemberStatus } from '@/app/utils/api'
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9092/rosterloop/api';
+
 function VerifyEmailContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -23,7 +25,7 @@ function VerifyEmailContent() {
     const verifyEmail = async () => {
       try {
         // Call backend endpoint to verify email
-        const response = await fetch(`http://localhost:8080/rosterloop/api/auth/verify-email?email=${encodeURIComponent(email)}`, {
+        const response = await fetch(`${API_BASE_URL}/auth/verify-email?email=${encodeURIComponent(email)}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

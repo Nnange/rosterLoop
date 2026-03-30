@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001", "https://rosterloop.awongnnange.com"})
 @RestController
 @RequestMapping("/rosterloop/api/households")
 public class HouseholdController {

@@ -12,8 +12,6 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME = "rosterloop-frontend"
-        CONTAINER_NAME = "rosterloop-frontend-app"
         FRONTEND_DIR = "frontend"
         BACKEND_DIR = "rosterloop"
         FRONTEND_IMAGE = "rosterloop-frontend:latest"
@@ -44,9 +42,6 @@ pipeline {
                 dir(FRONTEND_DIR) {
                     script {
                         sh 'npm install'
-                        // This creates a symlink so Vite reads the correct .env file
-                        // THIS IS THE ONLY CORRECT VERSION
-                        // sh "npm run test"
                         sh 'npm run build'
                         sh 'docker build -t rosterloop-frontend:${IMAGE_TAG} -t $FRONTEND_IMAGE .'
                     }
@@ -57,23 +52,63 @@ pipeline {
         stage('Build Backend') {
             steps {
                 dir(BACKEND_DIR) {
-                    //  withCredentials passes sensitive information
                     withCredentials([
-                    string(credentialsId: 'DB_PASSWORD', variable: 'SPRING_DATASOURCE_PASSWORD'),
-                ]){
-
-                    // Create secrets.properties dynamically
-                    sh '''
-                        cat > src/main/resources/secrets.properties <<EOF
-                        spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
-                        EOF
-                    '''
-                    sh 'mvn clean'  
-                    sh 'mvn package -DskipTests'
-                    sh 'docker build -t todo-backend:${IMAGE_TAG} -t ${BACKEND_IMAGE} .'
+                        string(credentialsId: 'DB_PASSWORD', variable: 'SPRING_DATASOURCE_PASSWORD'),
+                        string(credentialsId: 'Gmail_Password', variable: 'SPRING_MAIL_PASSWORD'),
+                        string(credentialsId: 'MAIL_USERNAME', variable: 'SPRING_MAIL_USERNAME'),
+                    ]) {
+                        // Create secrets.properties dynamically
+                        sh '''
+                            cat > src/main/resources/secrets.properties <<EOF
+                            spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
+                            spring.mail.password=${SPRING_MAIL_PASSWORD}
+                            spring.mail.username=${SPRING_MAIL_USERNAME}
+                            EOF
+                        '''
+                        sh 'mvn clean package -DskipTests'
+                        sh 'docker build -t rosterloop-backend:${IMAGE_TAG} -t ${BACKEND_IMAGE} .'
                     }
                 }
             }
+        }
+
+        stage('Deploy') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'DB_PASSWORD', variable: 'SPRING_DATASOURCE_PASSWORD'),
+                    string(credentialsId: 'Gmail_Password', variable: 'SPRING_MAIL_PASSWORD'),
+                    string(credentialsId: 'MAIL_USERNAME', variable: 'SPRING_MAIL_USERNAME'),
+                ]) {
+                    script {
+                        sh """
+                            SPRING_PROFILE=${params.PROFILE} \
+                            SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD} \
+                            SPRING_MAIL_PASSWORD=${SPRING_MAIL_PASSWORD} \
+                            SPRING_MAIL_USERNAME=${SPRING_MAIL_USERNAME} \
+                            docker compose down || true
+                        """
+                        sh """
+                            SPRING_PROFILE=${params.PROFILE} \
+                            SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD} \
+                            SPRING_MAIL_PASSWORD=${SPRING_MAIL_PASSWORD} \
+                            SPRING_MAIL_USERNAME=${SPRING_MAIL_USERNAME} \
+                            docker compose up -d
+                        """
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Deployment successful! Version: ${IMAGE_TAG}"
+        }
+        failure {
+            echo "❌ Build/Deployment failed! Version: ${IMAGE_TAG}"
+        }
+        always {
+            cleanWs(cleanWhenNotBuilt: false)
         }
     }
 }

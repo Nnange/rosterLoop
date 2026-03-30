@@ -5,6 +5,8 @@ import { useAuth } from "./context/AuthContext";
 import { useEffect, useState } from "react";
 import { isAdmin } from "./utils/roleUtils";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9092/rosterloop/api';
+
 export default function Home() {
   const router = useRouter();
   const { user, token, loading } = useAuth();
@@ -39,7 +41,7 @@ export default function Home() {
     try {
       console.log('Checking membership status with token...');
       const response = await fetch(
-        'http://localhost:8080/rosterloop/api/households/member/status',
+        `${API_BASE_URL}/households/member/status`,
         {
           method: 'GET',
           headers: {

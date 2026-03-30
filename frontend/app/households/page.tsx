@@ -10,6 +10,8 @@ import DeleteConfirmModal from '@/app/components/DeleteConfirmModal';
 import InviteModal from '@/app/components/InviteModal';
 import MembersModal from '@/app/components/MembersModal';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9092/rosterloop/api';
+
 interface Household {
   id: string;
   householdName: string;
@@ -48,7 +50,7 @@ export default function HouseholdsPage() {
     try {
       setLoading(true);
       const response = await fetch(
-        'http://localhost:8080/rosterloop/api/households',
+        `${API_BASE_URL}/households`,
         {
           method: 'GET',
           headers: {
@@ -90,7 +92,7 @@ export default function HouseholdsPage() {
     setIsInviting(true);
     try {
       const response = await fetch(
-        `http://localhost:8080/rosterloop/api/invitations/households/${householdToInvite.id}/invite`,
+        `${API_BASE_URL}/invitations/households/${householdToInvite.id}/invite`,
         {
           method: 'POST',
           headers: {
@@ -126,7 +128,7 @@ export default function HouseholdsPage() {
       console.log('Token:', token ? 'Present' : 'Missing');
       
       const response = await fetch(
-        `http://localhost:8080/rosterloop/api/households/${householdToDelete.id}`,
+        `${API_BASE_URL}/households/${householdToDelete.id}`,
         {
           method: 'DELETE',
           headers: {

@@ -1,1 +1,6 @@
 rosterloop/src/main/resources/secrets.properties
+
+# Environment files with secrets
+.env
+.env.local
+frontend/.env.local

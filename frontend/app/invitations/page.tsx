@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/app/context/AuthContext'
 import Header from '@/app/components/Header'
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9092/rosterloop/api';
+
 interface Invitation {
   id: string
   householdName: string
@@ -38,7 +40,7 @@ export default function InvitationsPage() {
 
     try {
       setLoading(true)
-      const response = await fetch('http://localhost:8080/rosterloop/api/invitations/pending', {
+      const response = await fetch(`${API_BASE_URL}/invitations/pending`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -68,7 +70,7 @@ export default function InvitationsPage() {
     setAcceptingId(invitationId)
     try {
       const response = await fetch(
-        `http://localhost:8080/rosterloop/api/invitations/${invitationId}/accept`,
+        `${API_BASE_URL}/invitations/${invitationId}/accept`,
         {
           method: 'POST',
           headers: {
@@ -102,7 +104,7 @@ export default function InvitationsPage() {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/rosterloop/api/invitations/${invitationId}/decline`,
+        `${API_BASE_URL}/invitations/${invitationId}/decline`,
         {
           method: 'POST',
           headers: {

@@ -8,6 +8,8 @@ import { isAdmin } from '@/app/utils/roleUtils'
 import Header from '@/app/components/Header'
 import { v4 as uuidv4 } from 'uuid'
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9092/rosterloop/api';
+
 export default function SetupPage() {
   const { user, token, loading } = useAuth()
   const router = useRouter()
@@ -44,7 +46,7 @@ export default function SetupPage() {
       const householdName = `Household - ${names.join(', ')}`
       const householdId = uuidv4()
       
-      const response = await fetch('http://localhost:8080/rosterloop/api/households', {
+      const response = await fetch(`${API_BASE_URL}/households`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

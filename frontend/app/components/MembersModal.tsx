@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9092/rosterloop/api';
+
 interface Member {
   memberId: string
   email: string
@@ -49,7 +51,7 @@ export default function MembersModal({
       setLoading(true)
       setError('')
       const response = await fetch(
-        `http://localhost:8080/rosterloop/api/invitations/households/${householdId}/members`,
+        `${API_BASE_URL}/invitations/households/${householdId}/members`,
         {
           method: 'GET',
           headers: {
@@ -79,7 +81,7 @@ export default function MembersModal({
     setRemovingId(memberId)
     try {
       const response = await fetch(
-        `http://localhost:8080/rosterloop/api/invitations/households/${householdId}/members/${memberId}`,
+        `${API_BASE_URL}/invitations/households/${householdId}/members/${memberId}`,
         {
           method: 'DELETE',
           headers: {
@@ -108,7 +110,7 @@ export default function MembersModal({
 
     try {
       const response = await fetch(
-        `http://localhost:8080/rosterloop/api/invitations/households/${householdId}/members/${memberId}/display-name`,
+        `${API_BASE_URL}/invitations/households/${householdId}/members/${memberId}/display-name`,
         {
           method: 'PUT',
           headers: {

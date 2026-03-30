@@ -6,11 +6,19 @@ COPY package.json package-lock.json* ./
 RUN npm install
 
 COPY . .
-RUN npm run build   # produces the /out directory
+RUN npm run build
 
 # --- Production Stage ---
-FROM nginx:alpine
-COPY --from=build /app/out /usr/share/nginx/html
+FROM node:22.14.0-alpine
+WORKDIR /app
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# Copy standalone server and static assets
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
+COPY --from=build /app/public ./public
+
+ENV NODE_ENV=production
+ENV PORT=3000
+
+EXPOSE 3000
+CMD ["node", "server.js"]

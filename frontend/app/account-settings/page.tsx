@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/app/context/AuthContext'
 import Header from '@/app/components/Header'
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9092/rosterloop/api';
+
 export default function AccountSettingsPage() {
   const router = useRouter()
   const { user, token, logout, loading } = useAuth()
@@ -33,7 +35,7 @@ export default function AccountSettingsPage() {
 
     try {
       const response = await fetch(
-        'http://localhost:8080/rosterloop/api/auth/account',
+        `${API_BASE_URL}/auth/account`,
         {
           method: 'DELETE',
           headers: {
