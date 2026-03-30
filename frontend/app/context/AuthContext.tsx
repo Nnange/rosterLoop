@@ -19,6 +19,7 @@ interface AuthUser {
   firstName: string
   lastName: string
   role?: string
+  emailVerified?: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -107,6 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         firstName: data.firstName,
         lastName: data.lastName,
         role: data.role,
+        emailVerified: data.emailVerified,
       }
 
       setToken(data.accessToken)

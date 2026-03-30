@@ -9,6 +9,7 @@ public class AuthResponse {
     private String firstName;
     private String lastName;
     private String role;
+    private Boolean emailVerified;
 
     public AuthResponse(String accessToken, String tokenType, long expiresIn, String userId, 
                        String email, String firstName, String lastName) {
@@ -19,6 +20,7 @@ public class AuthResponse {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.emailVerified = false;
     }
 
     public AuthResponse(String accessToken, String tokenType, long expiresIn, String userId, 
@@ -31,6 +33,20 @@ public class AuthResponse {
         this.firstName = firstName;
         this.lastName = lastName;
         this.role = role;
+        this.emailVerified = false;
+    }
+
+    public AuthResponse(String accessToken, String tokenType, long expiresIn, String userId, 
+                       String email, String firstName, String lastName, String role, Boolean emailVerified) {
+        this.accessToken = accessToken;
+        this.tokenType = tokenType;
+        this.expiresIn = expiresIn;
+        this.userId = userId;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.role = role;
+        this.emailVerified = emailVerified;
     }
 
     public String getAccessToken() {
@@ -95,5 +111,13 @@ public class AuthResponse {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Boolean getEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        this.emailVerified = emailVerified;
     }
 }

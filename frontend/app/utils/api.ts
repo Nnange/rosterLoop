@@ -28,3 +28,8 @@ export const createHousehold = async (id: any, flatmateNames: string[]) => {
   return response.data;
 };
 
+export const checkMemberStatus = async () => {
+  const response = await api.get('/households/member/status');
+  return response.data;
+};
+

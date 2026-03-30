@@ -49,7 +49,7 @@ export default function SignupPage() {
 
     try {
       await signup(formData.email, formData.password, formData.firstName, formData.lastName)
-      router.push('/')
+      router.push('/verification-required')
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Signup failed')
     }

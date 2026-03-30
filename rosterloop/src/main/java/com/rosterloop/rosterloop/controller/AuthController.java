@@ -97,4 +97,33 @@ public class AuthController {
                     .body(new ErrorResponse("Failed to create admin user"));
         }
     }
+
+    @DeleteMapping("/account")
+    public ResponseEntity<Object> deleteAccount(org.springframework.security.core.Authentication authentication) {
+        try {
+            if (authentication == null || !authentication.isAuthenticated()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ErrorResponse("User not authenticated"));
+            }
+
+            User user = (User) authentication.getPrincipal();
+            authService.deleteAccount(user.getId());
+
+            return ResponseEntity.ok(new ErrorResponse("Account deleted successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Failed to delete account: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/verify-email")
+    public ResponseEntity<Object> verifyEmail(@RequestParam String email) {
+        try {
+            authService.verifyEmail(email);
+            return ResponseEntity.ok(new ErrorResponse("Email verified successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse("Failed to verify email: " + e.getMessage()));
+        }
+    }
 }

@@ -2,6 +2,7 @@
 
 import { useAuth } from '@/app/context/AuthContext'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function Header() {
   const { user, isAuthenticated, logout } = useAuth()
@@ -32,6 +33,12 @@ export default function Header() {
               </p>
               <p className="text-xs text-gray-500">{user.email}</p>
             </div>
+            <Link
+              href="/account-settings"
+              className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors text-sm font-medium"
+            >
+              Settings
+            </Link>
             <button
               onClick={handleLogout}
               className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors text-sm font-medium"

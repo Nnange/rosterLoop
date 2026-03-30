@@ -7,6 +7,8 @@ import Link from 'next/link';
 import { isAdmin } from '@/app/utils/roleUtils';
 import Header from '@/app/components/Header';
 import DeleteConfirmModal from '@/app/components/DeleteConfirmModal';
+import InviteModal from '@/app/components/InviteModal';
+import MembersModal from '@/app/components/MembersModal';
 
 interface Household {
   id: string;
@@ -21,18 +23,19 @@ export default function HouseholdsPage() {
   const [households, setHouseholds] = useState<Household[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [householdToDelete, setHouseholdToDelete] = useState<Household | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const [householdToInvite, setHouseholdToInvite] = useState<Household | null>(null);
+  const [isInviting, setIsInviting] = useState(false);
+  const [membersModalOpen, setMembersModalOpen] = useState(false);
+  const [householdForMembers, setHouseholdForMembers] = useState<Household | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/login');
-      return;
-    }
-
-    if (!authLoading && user && !isAdmin(user.role)) {
-      router.push('/waiting');
       return;
     }
 
@@ -74,6 +77,44 @@ export default function HouseholdsPage() {
   const openDeleteModal = (household: Household) => {
     setHouseholdToDelete(household);
     setDeleteModalOpen(true);
+  };
+
+  const openInviteModal = (household: Household) => {
+    setHouseholdToInvite(household);
+    setInviteModalOpen(true);
+  };
+
+  const handleSendInvite = async (email: string) => {
+    if (!householdToInvite || !token) return;
+
+    setIsInviting(true);
+    try {
+      const response = await fetch(
+        `http://localhost:8080/rosterloop/api/invitations/households/${householdToInvite.id}/invite`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ inviteeEmail: email }),
+        }
+      );
+
+      if (response.ok) {
+        setInviteModalOpen(false);
+        setHouseholdToInvite(null);
+        setError('');
+        setSuccess('Invitation sent successfully!');
+        // Clear success message after 5 seconds
+        setTimeout(() => setSuccess(''), 5000);
+      } else {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to send invitation');
+      }
+    } finally {
+      setIsInviting(false);
+    }
   };
 
   const confirmDelete = async () => {
@@ -134,6 +175,10 @@ export default function HouseholdsPage() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 className="text-4xl font-bold text-gray-900 mb-8">
+          {isAdmin(user?.role) ? 'My Households' : 'Households'}
+        </h1>
+
         {error && (
           <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex justify-between items-center">
             <span>{error}</span>
@@ -146,20 +191,45 @@ export default function HouseholdsPage() {
           </div>
         )}
 
+        {success && (
+          <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg flex justify-between items-center">
+            <span>{success}</span>
+            <button
+              onClick={() => setSuccess('')}
+              className="text-green-700 hover:text-green-900 font-bold text-lg"
+            >
+              ×
+            </button>
+          </div>
+        )}
+
         {households.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-8 text-center">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-              No Households Yet
-            </h2>
-            <p className="text-gray-600 mb-6">
-              You don't have any households set up. Create one to get started!
-            </p>
-            <Link
-              href="/setup"
-              className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
-            >
-              Create Household
-            </Link>
+            {isAdmin(user?.role) ? (
+              <>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                  No Households Yet
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  You don't have any households set up. Create one to get started!
+                </p>
+                <Link
+                  href="/setup"
+                  className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
+                >
+                  Create Household
+                </Link>
+              </>
+            ) : (
+              <>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                  No Households
+                </h2>
+                <p className="text-gray-600">
+                  You haven't been invited to any households yet. Ask a household admin to invite you!
+                </p>
+              </>
+            )}
           </div>
         ) : (
           <div>
@@ -181,9 +251,9 @@ export default function HouseholdsPage() {
                       <div className="mb-4 pb-3 border-b border-gray-200">
                         <p className="text-xs text-gray-600 font-medium mb-1">Flatmates:</p>
                         <div className="flex flex-wrap gap-1">
-                          {household.flatmateNames.map((name, index) => (
+                          {household.flatmateNames.map((name) => (
                             <span
-                              key={index}
+                              key={name}
                               className="inline-block px-2 py-1 bg-indigo-100 text-indigo-700 text-xs rounded"
                             >
                               {name}
@@ -194,45 +264,66 @@ export default function HouseholdsPage() {
                     )}
                     
                     <div className="flex gap-2 justify-end">
+                      {isAdmin(user?.role) && (
+                        <>
+                          <button
+                            onClick={() => openInviteModal(household)}
+                            className="px-3 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                          >
+                            Invite
+                          </button>
+                          <button
+                            onClick={() => {
+                              setHouseholdForMembers(household);
+                              setMembersModalOpen(true);
+                            }}
+                            className="px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                          >
+                            Members
+                          </button>
+                          <Link
+                            href={`/households/${household.id}/edit`}
+                            className="px-3 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                          >
+                            Edit
+                          </Link>
+                          <button
+                            onClick={() => handleDeleteHousehold(household.id)}
+                            className="px-3 py-2 bg-gray-100 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors"
+                          >
+                            Delete
+                          </button>
+                        </>
+                      )}
                       <Link
                         href={`/roster/${household.id}`}
                         className="px-3 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
                       >
-                        View
+                        View Roster
                       </Link>
-                      <Link
-                        href={`/households/${household.id}/edit`}
-                        className="px-3 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
-                      >
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() => handleDeleteHousehold(household.id)}
-                        className="px-3 py-2 bg-gray-100 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors"
-                      >
-                        Delete
-                      </button>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="bg-white rounded-lg shadow-md p-8 text-center">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-                Add Another Household?
-              </h2>
-              <p className="text-gray-600 mb-6">
-                Create an additional household to manage another cleaning
-                schedule
-              </p>
-              <Link
-                href="/setup"
-                className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
-              >
-                Create New Household
-              </Link>
-            </div>
+            {isAdmin(user?.role) && (
+              <div className="bg-white rounded-lg shadow-md p-8 text-center">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                  Add Another Household?
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  Create an additional household to manage another cleaning
+                  schedule
+                </p>
+                <Link
+                  href="/setup"
+                  className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
+                >
+                  Create New Household
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </main>
@@ -245,6 +336,32 @@ export default function HouseholdsPage() {
         onCancel={() => {
           setDeleteModalOpen(false);
           setHouseholdToDelete(null);
+        }}
+      />
+
+      <InviteModal
+        isOpen={inviteModalOpen}
+        householdName={householdToInvite?.householdName || ''}
+        isInviting={isInviting}
+        onInvite={handleSendInvite}
+        onCancel={() => {
+          setInviteModalOpen(false);
+          setHouseholdToInvite(null);
+        }}
+      />
+
+      <MembersModal
+        isOpen={membersModalOpen}
+        householdId={householdForMembers?.id || ''}
+        householdName={householdForMembers?.householdName || ''}
+        token={token}
+        onClose={() => {
+          setMembersModalOpen(false);
+          setHouseholdForMembers(null);
+        }}
+        onMemberRemoved={() => {
+          setSuccess('Member removed successfully');
+          setTimeout(() => setSuccess(''), 5000);
         }}
       />
     </div>

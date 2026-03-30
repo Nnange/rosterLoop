@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/app/context/AuthContext'
 import { isAdmin } from '@/app/utils/roleUtils'
+import Header from '@/app/components/Header'
 
 export default function WaitingPage() {
   const { user, loading } = useAuth()
@@ -37,8 +38,10 @@ export default function WaitingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+    <>
+      <Header />
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
         <div className="mb-6">
           <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg
@@ -75,7 +78,8 @@ export default function WaitingPage() {
             Your Email: <span className="font-semibold text-gray-700">{user.email}</span>
           </p>
         </div>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
