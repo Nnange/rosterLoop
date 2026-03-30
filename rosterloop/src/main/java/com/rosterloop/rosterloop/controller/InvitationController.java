@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/rosterloop/api/invitations")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001", "https://rosterloop.awongnnange.com"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://192.168.178.36:3002", "https://rosterloop.awongnnange.com"})
 public class InvitationController {
     private final HouseholdInvitationService invitationService;
     private final HouseholdRepository householdRepository;
