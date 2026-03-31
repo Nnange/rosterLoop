@@ -43,7 +43,7 @@ pipeline {
                     script {
                         sh 'npm install'
                         sh 'npm run build'
-                        sh 'docker build -t rosterloop-frontend:${IMAGE_TAG} -t $FRONTEND_IMAGE .'
+                        sh 'docker build --build-arg NEXT_PUBLIC_API_URL=http://192.168.178.36:9092/rosterloop/api -t rosterloop-frontend:${IMAGE_TAG} -t $FRONTEND_IMAGE .'
                     }
                 }
             }

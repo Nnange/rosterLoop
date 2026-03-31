@@ -25,9 +25,9 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://192.168.178.36:9092/rosterloop/api}
     container_name: rosterloop_frontend
-    volumes:
-      - /home/akweh/Documents/rosterloopEnv/.env.${SPRING_PROFILE:-dev}:/app/.env:ro
     ports:
       - "3002:3000"
     restart: unless-stopped

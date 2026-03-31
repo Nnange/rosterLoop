@@ -6,6 +6,11 @@ COPY package.json package-lock.json* ./
 RUN npm install
 
 COPY . .
+
+# NEXT_PUBLIC_* vars are baked at build time, so we pass them as build args
+ARG NEXT_PUBLIC_API_URL=http://localhost:9092/rosterloop/api
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
 RUN npm run build
 
 # --- Production Stage ---
