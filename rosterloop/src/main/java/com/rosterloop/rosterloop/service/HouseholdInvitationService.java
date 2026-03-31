@@ -9,6 +9,7 @@ import com.rosterloop.rosterloop.exception.InvitationException;
 import com.rosterloop.rosterloop.repository.HouseholdInvitationRepository;
 import com.rosterloop.rosterloop.repository.HouseholdMemberRepository;
 import com.rosterloop.rosterloop.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,9 @@ public class HouseholdInvitationService {
     private final HouseholdMemberRepository memberRepository;
     private final UserRepository userRepository;
     private final EmailService emailService;
+
+    @Value("${app.frontend.url:http://localhost:3000}")
+    private String frontendUrl;
 
     public HouseholdInvitationService(HouseholdInvitationRepository invitationRepository,
                                       HouseholdMemberRepository memberRepository,
@@ -50,7 +54,7 @@ public class HouseholdInvitationService {
         HouseholdInvitation savedInvitation = invitationRepository.save(invitation);
         
         // Send invitation email
-        String invitationLink = "http://localhost:3000/invitations";
+        String invitationLink = frontendUrl + "/invitations";
         String inviterName = inviter.getFirstName() + " " + inviter.getLastName();
         emailService.sendInvitationEmail(inviteeEmail, household.getHouseholdName(), inviterName, invitationLink);
         

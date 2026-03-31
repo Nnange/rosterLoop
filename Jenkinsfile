@@ -41,9 +41,16 @@ pipeline {
             steps {
                 dir(FRONTEND_DIR) {
                     script {
+                        def apiUrls = [
+                            local: 'http://localhost:9092/rosterloop/api',
+                            dev  : 'http://192.168.178.36:9092/rosterloop/api',
+                            prod : 'https://rosterloopapi.awongnnange.com/rosterloop/api'
+                        ]
+                        def apiUrl = apiUrls[params.PROFILE] ?: apiUrls['dev']
+
                         sh 'npm install'
                         sh 'npm run build'
-                        sh 'docker build --build-arg NEXT_PUBLIC_API_URL=http://192.168.178.36:9092/rosterloop/api -t rosterloop-frontend:${IMAGE_TAG} -t $FRONTEND_IMAGE .'
+                        sh "docker build --build-arg NEXT_PUBLIC_API_URL=${apiUrl} -t rosterloop-frontend:${IMAGE_TAG} -t ${FRONTEND_IMAGE} ."
                     }
                 }
             }

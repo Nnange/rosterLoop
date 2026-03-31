@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,9 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+
+    @Value("${app.frontend.url:http://localhost:3000}")
+    private String frontendUrl;
 
     public AuthService(UserRepository userRepository,
                       HouseholdMemberRepository householdMemberRepository,
@@ -64,7 +68,7 @@ public class AuthService {
         User savedUser = userRepository.save(user);
         
         // Send verification email
-        String verificationLink = "http://localhost:3000/verify-email?email=" + savedUser.getEmail();
+        String verificationLink = frontendUrl + "/verify-email?email=" + savedUser.getEmail();
         emailService.sendVerificationEmail(savedUser.getEmail(), verificationLink);
 
         String token = jwtTokenProvider.generateToken(savedUser.getEmail(), savedUser.getId().toString());
