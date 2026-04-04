@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "./context/AuthContext";
+import { SimpleCookieConsentBanner } from "./components/SimpleCookieConsentBanner";
 
 export const metadata: Metadata = {
   title: "Clean Roster",
@@ -16,6 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`antialiased`}>
         <AuthProvider>
+          <SimpleCookieConsentBanner />
           {children}
         </AuthProvider>
       </body>
