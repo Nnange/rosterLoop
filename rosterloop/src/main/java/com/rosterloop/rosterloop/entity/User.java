@@ -41,6 +41,12 @@ public class User implements UserDetails {
     @Column(name = "email_verification_token")
     private String emailVerificationToken;
 
+    @Column(name = "reset_token", unique = true)
+    private String resetToken;
+
+    @Column(name = "reset_token_expires_at")
+    private LocalDateTime resetTokenExpiresAt;
+
     @Column(name = "role", nullable = false)
     private String role = "ROLE_USER";
 
@@ -129,6 +135,22 @@ public class User implements UserDetails {
 
     public void setEmailVerificationToken(String emailVerificationToken) {
         this.emailVerificationToken = emailVerificationToken;
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public LocalDateTime getResetTokenExpiresAt() {
+        return resetTokenExpiresAt;
+    }
+
+    public void setResetTokenExpiresAt(LocalDateTime resetTokenExpiresAt) {
+        this.resetTokenExpiresAt = resetTokenExpiresAt;
     }
 
     public String getRole() {

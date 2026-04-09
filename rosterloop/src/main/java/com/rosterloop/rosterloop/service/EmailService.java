@@ -49,6 +49,21 @@ public class EmailService {
         }
     }
 
+    public void sendPasswordResetEmail(String toEmail, String resetLink) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
+            message.setTo(toEmail);
+            message.setSubject("Reset your RosterLoop password");
+            message.setText(buildPasswordResetEmailBody(resetLink));
+
+            mailSender.send(message);
+        } catch (Exception e) {
+            // Log the error but don't throw - reset token is already created
+            logger.warn("Failed to send password reset email: " + e.getMessage(), e);
+        }
+    }
+
     private String buildInvitationEmailBody(String householdName, String inviterName, String invitationLink) {
         return "Hello,\n\n" +
                inviterName + " has invited you to join the household '" + householdName + "' on RosterLoop.\n\n" +
@@ -67,6 +82,17 @@ public class EmailService {
                verificationLink + "\n\n" +
                "This verification link will expire in 24 hours.\n\n" +
                "If you didn't create this account, you can safely ignore this email.\n\n" +
+               "Best regards,\n" +
+               "The RosterLoop Team";
+    }
+
+    private String buildPasswordResetEmailBody(String resetLink) {
+        return "Hello,\n\n" +
+               "We received a request to reset the password for your RosterLoop account. If you made this request, please click the link below to create a new password:\n\n" +
+               resetLink + "\n\n" +
+               "This password reset link will expire in 1 hour.\n\n" +
+               "If you didn't request a password reset, you can safely ignore this email. Your password won't be changed.\n\n" +
+               "For security reasons, never share this link with anyone.\n\n" +
                "Best regards,\n" +
                "The RosterLoop Team";
     }

@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @CrossOrigin(origins = {"http://localhost:3000", "http://192.168.178.36:3002", "https://rosterloop.awongnnange.com"})
 @RestController
 @RequestMapping("/rosterloop/api/auth")
@@ -140,6 +142,64 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ErrorResponse("Failed to verify email: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Object> forgotPassword(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            if (email == null || email.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ErrorResponse("Email is required"));
+            }
+
+            authService.sendPasswordResetEmail(email);
+            return ResponseEntity.ok(new ErrorResponse("Password reset link has been sent to your email"));
+        } catch (RuntimeException e) {
+            // Don't reveal if email exists for security
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ErrorResponse("If an account exists with this email, a password reset link has been sent"));
+        }
+    }
+
+    @GetMapping("/verify-reset-token")
+    public ResponseEntity<Object> verifyResetToken(@RequestParam String token) {
+        try {
+            boolean isValid = authService.verifyResetToken(token);
+            if (isValid) {
+                return ResponseEntity.ok(new ErrorResponse("Reset token is valid"));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ErrorResponse("Invalid or expired reset token"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse("Error verifying reset token"));
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Object> resetPassword(@RequestBody Map<String, String> request) {
+        try {
+            String token = request.get("token");
+            String newPassword = request.get("newPassword");
+
+            if (token == null || token.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ErrorResponse("Reset token is required"));
+            }
+
+            if (newPassword == null || newPassword.length() < 8) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ErrorResponse("Password must be at least 8 characters long"));
+            }
+
+            authService.resetPassword(token, newPassword);
+            return ResponseEntity.ok(new ErrorResponse("Password has been reset successfully"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse(e.getMessage()));
         }
     }
 }

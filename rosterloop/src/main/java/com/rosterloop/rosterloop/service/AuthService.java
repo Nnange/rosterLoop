@@ -177,4 +177,53 @@ public class AuthService {
         user.setIsEmailVerified(true);
         userRepository.save(user);
     }
+
+    @Transactional
+    public void sendPasswordResetEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+        
+        // Generate reset token
+        String resetToken = UUID.randomUUID().toString();
+        LocalDateTime expiresAt = LocalDateTime.now().plusHours(1);
+        
+        user.setResetToken(resetToken);
+        user.setResetTokenExpiresAt(expiresAt);
+        userRepository.save(user);
+        
+        // Send reset email
+        String resetLink = frontendUrl + "/reset-password?token=" + resetToken;
+        emailService.sendPasswordResetEmail(email, resetLink);
+    }
+
+    @Transactional
+    public boolean verifyResetToken(String token) {
+        User user = userRepository.findByResetToken(token)
+                .orElse(null);
+        
+        if (user == null) {
+            return false;
+        }
+        
+        if (user.getResetTokenExpiresAt() == null || user.getResetTokenExpiresAt().isBefore(LocalDateTime.now())) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    @Transactional
+    public void resetPassword(String token, String newPassword) {
+        User user = userRepository.findByResetToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid or expired reset token"));
+        
+        if (user.getResetTokenExpiresAt() == null || user.getResetTokenExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Reset token has expired");
+        }
+        
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setResetToken(null);
+        user.setResetTokenExpiresAt(null);
+        userRepository.save(user);
+    }
 }
