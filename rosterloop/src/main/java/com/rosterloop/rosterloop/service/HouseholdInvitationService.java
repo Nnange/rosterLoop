@@ -89,12 +89,10 @@ public class HouseholdInvitationService {
         }
         
         // Add user as member
-        HouseholdMember member = new HouseholdMember(
-            UUID.randomUUID(),
-            invitation.getHousehold(),
-            user,
-            LocalDateTime.now()
-        );
+        HouseholdMember member = new HouseholdMember();
+        member.setHousehold(invitation.getHousehold());
+        member.setUser(user);
+        member.setJoinedAt(LocalDateTime.now());
         memberRepository.save(member);
         
         // Update invitation status

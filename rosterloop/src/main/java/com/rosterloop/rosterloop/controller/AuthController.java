@@ -12,6 +12,7 @@ import com.rosterloop.rosterloop.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = {"http://localhost:3000", "http://192.168.178.36:3002", "https://rosterloop.awongnnange.com"})
@@ -48,9 +49,24 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<AuthResponse> getCurrentUser() {
-        // This will be populated by Spring Security context
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AuthResponse> getCurrentUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
+        User user = (User) authentication.getPrincipal();
+        AuthResponse response = new AuthResponse(
+                null, // No token needed for /me endpoint
+                "Bearer",
+                0,
+                user.getId().toString(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getRole(),
+                user.getIsEmailVerified()
+        );
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/create-admin")

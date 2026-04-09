@@ -56,6 +56,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/rosterloop/api/auth/**").permitAll()
                         .requestMatchers("/rosterloop/api/public/**").permitAll()
+                        .requestMatchers("/rosterloop/api/households/join/verify/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

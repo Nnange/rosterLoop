@@ -50,8 +50,16 @@ export default function SignupPage() {
 
     try {
       await signup(formData.email, formData.password, formData.firstName, formData.lastName)
-      const redirectUrl = searchParams.get('redirect') || '/verification-required'
-      router.push(redirectUrl)
+      const redirectUrl = searchParams.get('redirect')
+      if (redirectUrl) {
+        // Store the returnUrl in localStorage so verify-email can use it
+        localStorage.setItem('pendingReturnUrl', redirectUrl)
+        // Go to verification with return to join
+        router.push(`/verification-required?returnUrl=${encodeURIComponent(redirectUrl)}`)
+      } else {
+        // Otherwise, go to default verification page
+        router.push('/verification-required')
+      }
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Signup failed')
     }

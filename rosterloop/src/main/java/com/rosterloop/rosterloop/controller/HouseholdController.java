@@ -71,10 +71,106 @@ public class HouseholdController {
             household.setOwner(owner);
             household.setCreatedAt(LocalDateTime.now());
             
+            // Generate a unique join token (valid for 30 days)
+            String joinToken = UUID.randomUUID().toString();
+            household.setJoinToken(joinToken);
+            household.setJoinTokenExpiresAt(LocalDateTime.now().plusDays(30));
+            
             Household savedHousehold = householdRepository.save(household);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedHousehold);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @GetMapping("/join/verify/{joinToken}")
+    public ResponseEntity<HouseholdJoinInfoResponse> verifyJoinToken(@PathVariable String joinToken) {
+        try {
+            var household = householdRepository.findByJoinToken(joinToken);
+            
+            if (household.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            Household h = household.get();
+            
+            // Check if token is expired
+            if (h.getJoinTokenExpiresAt() != null && LocalDateTime.now().isAfter(h.getJoinTokenExpiresAt())) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            // Count members
+            long memberCount = householdMemberRepository.countByHouseholdId(h.getId());
+            // Add owner to count
+            memberCount += 1;
+
+            HouseholdJoinInfoResponse response = new HouseholdJoinInfoResponse(
+                    h.getId().toString(),
+                    h.getHouseholdName(),
+                    h.getOwner().getFirstName() + " " + h.getOwner().getLastName(),
+                    (int) memberCount
+            );
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Error verifying join token: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/join/{joinToken}")
+    public ResponseEntity<JoinHouseholdResponse> joinHouseholdWithToken(@PathVariable String joinToken, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        try {
+            User user = (User) authentication.getPrincipal();
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            var household = householdRepository.findByJoinToken(joinToken);
+            
+            if (household.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new JoinHouseholdResponse(false, "Invalid or expired join link"));
+            }
+
+            Household h = household.get();
+            
+            // Check if token is expired
+            if (h.getJoinTokenExpiresAt() != null && LocalDateTime.now().isAfter(h.getJoinTokenExpiresAt())) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new JoinHouseholdResponse(false, "Join link has expired"));
+            }
+
+            // Check if user is the owner of this household
+            if (h.getOwner().getId().equals(user.getId())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(new JoinHouseholdResponse(false, "You are the owner of this household"));
+            }
+
+            // Check if user is already a member
+            if (householdMemberRepository.existsByHouseholdIdAndUserId(h.getId(), user.getId())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(new JoinHouseholdResponse(false, "You are already a member of this household"));
+            }
+
+            // Add user as household member
+            HouseholdMember member = new HouseholdMember();
+            member.setHousehold(h);
+            member.setUser(user);
+            member.setJoinedAt(LocalDateTime.now());
+            householdMemberRepository.save(member);
+
+            logger.info("User {} joined household {} via join token", user.getId(), h.getId());
+            
+            return ResponseEntity.ok(new JoinHouseholdResponse(true, "Successfully joined household"));
+        } catch (Exception e) {
+            logger.error("Error joining household with token: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new JoinHouseholdResponse(false, "Error joining household"));
         }
     }
 
@@ -98,6 +194,13 @@ public class HouseholdController {
             
             if (!isOwner && !isMember) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
+            // Ensure household has a join token
+            if (household.getJoinToken() == null) {
+                household.setJoinToken(UUID.randomUUID().toString());
+                household.setJoinTokenExpiresAt(LocalDateTime.now().plusDays(30));
+                householdRepository.save(household);
             }
 
             return ResponseEntity.ok(household);
@@ -129,6 +232,15 @@ public class HouseholdController {
             for (Household household : memberHouseholdsList) {
                 if (!allHouseholds.contains(household)) {
                     allHouseholds.add(household);
+                }
+            }
+            
+            // Ensure all households have join tokens
+            for (Household household : allHouseholds) {
+                if (household.getJoinToken() == null) {
+                    household.setJoinToken(UUID.randomUUID().toString());
+                    household.setJoinTokenExpiresAt(LocalDateTime.now().plusDays(30));
+                    householdRepository.save(household);
                 }
             }
             
@@ -208,6 +320,54 @@ public class HouseholdController {
             logger.error("Error deleting household: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new DeleteHouseholdResponse(false, "Error deleting household: " + e.getMessage()));
+        }
+    }
+
+    public static class HouseholdJoinInfoResponse {
+        private final String id;
+        private final String name;
+        private final String ownerName;
+        private final int memberCount;
+
+        public HouseholdJoinInfoResponse(String id, String name, String ownerName, int memberCount) {
+            this.id = id;
+            this.name = name;
+            this.ownerName = ownerName;
+            this.memberCount = memberCount;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getOwnerName() {
+            return ownerName;
+        }
+
+        public int getMemberCount() {
+            return memberCount;
+        }
+    }
+
+    public static class JoinHouseholdResponse {
+        private final boolean success;
+        private final String message;
+
+        public JoinHouseholdResponse(boolean success, String message) {
+            this.success = success;
+            this.message = message;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public String getMessage() {
+            return message;
         }
     }
 

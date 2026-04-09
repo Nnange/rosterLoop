@@ -36,27 +36,35 @@ function VerifyEmailContent() {
           setStatus('success')
           setMessage('Your email has been verified successfully!')
           
-          // Check if user has household membership
-          try {
-            const memberStatus = await checkMemberStatus()
-            
-            // Redirect based on household membership after 2 seconds
-            setTimeout(() => {
-              if (memberStatus.hasMembership) {
-                // User has households, redirect to households page
-                router.push('/households')
-              } else {
-                // User has no households, redirect to waiting page
+          // Check if there's a pending return URL (from join flow)
+          const pendingReturnUrl = localStorage.getItem('pendingReturnUrl')
+          
+          // Redirect based on pending return URL or household membership after 2 seconds
+          setTimeout(async () => {
+            if (pendingReturnUrl) {
+              // Clear the pending return URL
+              localStorage.removeItem('pendingReturnUrl')
+              // Redirect to the join page (or wherever they came from)
+              router.push(pendingReturnUrl)
+            } else {
+              // Check if user has household membership
+              try {
+                const memberStatus = await checkMemberStatus()
+                
+                if (memberStatus.hasMembership) {
+                  // User has households, redirect to households page
+                  router.push('/households')
+                } else {
+                  // User has no households, redirect to waiting page
+                  router.push('/waiting')
+                }
+              } catch (err) {
+                console.error('Error checking membership status:', err)
+                // Default to waiting page if check fails
                 router.push('/waiting')
               }
-            }, 2000)
-          } catch (err) {
-            console.error('Error checking membership status:', err)
-            // Default to waiting page if check fails
-            setTimeout(() => {
-              router.push('/waiting')
-            }, 2000)
-          }
+            }
+          }, 2000)
         } else {
           // Handle non-JSON responses
           let errorMessage = 'Failed to verify email. Please try again.'

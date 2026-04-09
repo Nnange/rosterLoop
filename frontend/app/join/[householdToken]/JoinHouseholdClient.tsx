@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useAuth } from '@/app/context/AuthContext'
 import Header from '@/app/components/Header'
@@ -14,22 +14,33 @@ interface HouseholdInfo {
   memberCount: number
 }
 
-type PageState = 'loading' | 'verify' | 'needs-auth' | 'processing' | 'success' | 'error'
+type PageState = 'loading' | 'verify' | 'needs-auth' | 'processing' | 'success' | 'already-member' | 'error'
 
 export default function JoinHouseholdClient() {
   const params = useParams()
   const router = useRouter()
-  const { user, token, loading: authLoading } = useAuth()
+  const { user, token, loading: authLoading, refreshUser } = useAuth()
   
   const [pageState, setPageState] = useState<PageState>('loading')
   const [householdInfo, setHouseholdInfo] = useState<HouseholdInfo | null>(null)
   const [error, setError] = useState('')
+  const [hasRefreshed, setHasRefreshed] = useState(false)
+  const isJoiningRef = useRef(false)
 
   const householdToken = params.householdToken as string
+
+  // Refresh user data on mount to get latest emailVerified status
+  useEffect(() => {
+    if (token && !hasRefreshed) {
+      refreshUser().then(() => setHasRefreshed(true))
+    }
+  }, [token, hasRefreshed, refreshUser])
 
   // Step 1: Verify the household token and get household info
   useEffect(() => {
     if (!householdToken) return
+    // Wait for user refresh if we have a token
+    if (token && !hasRefreshed) return
 
     const verifyToken = async () => {
       try {
@@ -47,8 +58,16 @@ export default function JoinHouseholdClient() {
           const data = await response.json()
           setHouseholdInfo(data)
           
-          // If user is already authenticated, join directly
+          // If user is already authenticated, check if email is verified
           if (user && token && !authLoading) {
+            // Check if user has verified their email
+            if (!user.emailVerified) {
+              // Store the return URL and redirect to verification-required page
+              const returnUrl = `/join/${householdToken}`
+              localStorage.setItem('pendingReturnUrl', returnUrl)
+              router.push(`/verification-required?returnUrl=${encodeURIComponent(returnUrl)}`)
+              return
+            }
             joinHousehold(token)
           } else if (!authLoading) {
             // Redirect to login/signup with return URL
@@ -69,17 +88,32 @@ export default function JoinHouseholdClient() {
     }
 
     verifyToken()
-  }, [householdToken, authLoading])
+  }, [householdToken, authLoading, hasRefreshed, token, user, router])
 
   // Step 2: If user logs in/signs up, automatically join household
   useEffect(() => {
+    // Wait for user refresh if we have a token
+    if (token && !hasRefreshed) return
+    
     if (user && token && !authLoading && pageState !== 'success' && pageState !== 'processing') {
+      // Check if user has verified their email
+      if (!user.emailVerified) {
+        // Store the return URL and redirect to verification-required page
+        const returnUrl = `/join/${householdToken}`
+        localStorage.setItem('pendingReturnUrl', returnUrl)
+        router.push(`/verification-required?returnUrl=${encodeURIComponent(returnUrl)}`)
+        return
+      }
       joinHousehold(token)
     }
-  }, [user, token, authLoading])
+  }, [user, token, authLoading, hasRefreshed, householdToken, pageState, router])
 
   // Step 3: Join the household
   const joinHousehold = async (authToken: string) => {
+    // Prevent duplicate join calls
+    if (isJoiningRef.current) return
+    isJoiningRef.current = true
+    
     setPageState('processing')
     try {
       const response = await fetch(
@@ -95,17 +129,16 @@ export default function JoinHouseholdClient() {
 
       if (response.ok) {
         setPageState('success')
-        // Redirect to the household after 2 seconds
+        // Redirect to households page after 2 seconds
         setTimeout(() => {
-          router.push(`/households/${householdInfo?.id}`)
+          router.push('/households')
         }, 2000)
       } else if (response.status === 409) {
-        // Already a member
-        setPageState('success')
-        setError('You are already a member of this household!')
+        // Already a member or owner
+        setPageState('already-member')
         setTimeout(() => {
-          router.push(`/households/${householdInfo?.id}`)
-        }, 2000)
+          router.push('/households')
+        }, 3000)
       } else {
         const data = await response.json()
         setPageState('error')
@@ -170,6 +203,41 @@ export default function JoinHouseholdClient() {
             </p>
             <p className="text-sm text-gray-500">
               Redirecting you to the household...
+            </p>
+          </div>
+        </main>
+      </div>
+    )
+  }
+
+  // Already a member state
+  if (pageState === 'already-member') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <Header />
+        <main className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
+          <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+            <div className="mb-4">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+                <svg
+                  className="w-8 h-8 text-blue-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Already a Member!</h2>
+            <p className="text-gray-600 mb-4">
+              You're already a member of <strong>{householdInfo?.name}</strong>
+            </p>
+            <p className="text-sm text-gray-500">
+              Redirecting you to your households...
             </p>
           </div>
         </main>

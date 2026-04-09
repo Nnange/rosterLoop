@@ -30,7 +30,7 @@ export default function MembersModal({
   token,
   onClose,
   onMemberRemoved,
-}: MembersModalProps) {
+}: Readonly<MembersModalProps>) {
   const [members, setMembers] = useState<Member[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')

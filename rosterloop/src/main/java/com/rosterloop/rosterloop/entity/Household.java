@@ -28,6 +28,12 @@ public class Household {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "join_token", unique = true, nullable = true)
+    private String joinToken;
+
+    @Column(name = "join_token_expires_at", nullable = true)
+    private LocalDateTime joinTokenExpiresAt;
+
     public UUID getId() {
         return id;
     }
@@ -66,5 +72,21 @@ public class Household {
 
     public void setHouseholdName(String householdName) {
         this.householdName = householdName;
+    }
+
+    public String getJoinToken() {
+        return joinToken;
+    }
+
+    public void setJoinToken(String joinToken) {
+        this.joinToken = joinToken;
+    }
+
+    public LocalDateTime getJoinTokenExpiresAt() {
+        return joinTokenExpiresAt;
+    }
+
+    public void setJoinTokenExpiresAt(LocalDateTime joinTokenExpiresAt) {
+        this.joinTokenExpiresAt = joinTokenExpiresAt;
     }
 }

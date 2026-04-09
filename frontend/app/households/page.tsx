@@ -17,6 +17,7 @@ interface Household {
   id: string;
   householdName: string;
   createdAt: string;
+  joinToken: string;
   flatmateNames?: string[];
 }
 
@@ -93,7 +94,7 @@ export default function HouseholdsPage() {
   const openShareLinkModal = (household: Household) => {
     setHouseholdToShare(household);
     const baseUrl = typeof globalThis.window !== 'undefined' ? globalThis.window.location.origin : '';
-    const joinLink = `${baseUrl}/join/${household.id}`;
+    const joinLink = `${baseUrl}/join/${household.joinToken}`;
     setShareLink(joinLink);
     setShareLinkModalOpen(true);
   };

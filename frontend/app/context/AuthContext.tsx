@@ -11,6 +11,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>
   signup: (email: string, password: string, firstName: string, lastName: string) => Promise<void>
   logout: () => void
+  refreshUser: () => Promise<void>
   loading: boolean
   error: string | null
 }
@@ -135,6 +136,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('authUser')
   }, [])
 
+  const refreshUser = useCallback(async () => {
+    const storedToken = localStorage.getItem('authToken')
+    if (!storedToken) return
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/me`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${storedToken}`,
+        },
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        const authUser: AuthUser = {
+          userId: data.userId,
+          email: data.email,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          role: data.role,
+          emailVerified: data.emailVerified,
+        }
+        setUser(authUser)
+        localStorage.setItem('authUser', JSON.stringify(authUser))
+      }
+    } catch (err) {
+      console.error('Error refreshing user:', err)
+    }
+  }, [])
+
   return (
     <AuthContext.Provider
       value={{
@@ -144,6 +176,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         signup,
         logout,
+        refreshUser,
         loading,
         error,
       }}

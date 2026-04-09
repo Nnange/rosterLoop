@@ -3,22 +3,28 @@
 import { useEffect } from 'react'
 import { useAuth } from '@/app/context/AuthContext'
 import Header from '@/app/components/Header'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function VerificationRequiredPage() {
   const { user } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   useEffect(() => {
-    // If user is already verified, redirect to home
+    // If user is already verified, redirect appropriately
     if (user?.emailVerified) {
-      router.push('/')
+      const returnUrl = searchParams.get('returnUrl')
+      if (returnUrl) {
+        router.push(returnUrl)
+      } else {
+        router.push('/')
+      }
     }
     // If no user is logged in, redirect to login
     if (!user) {
       router.push('/login')
     }
-  }, [user, router])
+  }, [user, router, searchParams])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">

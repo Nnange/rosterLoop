@@ -80,7 +80,7 @@ interface CookieBannerProps {
   onSave: (consent: CookieConsent) => void
 }
 
-function CookieBanner({ onAcceptAll, onRejectAll, onSave }: CookieBannerProps) {
+function CookieBanner({ onAcceptAll, onRejectAll, onSave }: Readonly<CookieBannerProps>) {
   const [showDetails, setShowDetails] = useState(false)
   const [preferences, setPreferences] = useState<CookieConsent>({
     essential: true,
