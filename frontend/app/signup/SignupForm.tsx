@@ -63,6 +63,14 @@ export default function SignupForm() {
     }
   }
 
+  const getLoginLink = () => {
+    const redirect = searchParams.get('redirect')
+    if (redirect) {
+      return `/login?redirect=${encodeURIComponent(redirect)}`
+    }
+    return '/login'
+  }
+
   return (
     <div className="bg-white p-8 rounded-lg shadow-md w-96 mb-10">
       <h1 className="text-2xl font-bold mb-6 text-center">Create Account</h1>
@@ -165,7 +173,7 @@ export default function SignupForm() {
 
       <p className="text-center text-gray-600 mt-4">
         Already have an account?{' '}
-        <a href="/login" className="text-indigo-600 hover:underline font-semibold">
+        <a href={getLoginLink()} className="text-indigo-600 hover:underline font-semibold">
           Log in
         </a>
       </p>
