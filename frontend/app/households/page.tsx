@@ -9,6 +9,7 @@ import Header from '@/app/components/Header';
 import DeleteConfirmModal from '@/app/components/DeleteConfirmModal';
 import InviteModal from '@/app/components/InviteModal';
 import MembersModal from '@/app/components/MembersModal';
+import ShareLinkModal from '@/app/components/ShareLinkModal';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9092/rosterloop/api';
 
@@ -34,6 +35,9 @@ export default function HouseholdsPage() {
   const [isInviting, setIsInviting] = useState(false);
   const [membersModalOpen, setMembersModalOpen] = useState(false);
   const [householdForMembers, setHouseholdForMembers] = useState<Household | null>(null);
+  const [shareLinkModalOpen, setShareLinkModalOpen] = useState(false);
+  const [householdToShare, setHouseholdToShare] = useState<Household | null>(null);
+  const [shareLink, setShareLink] = useState('');
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -84,6 +88,14 @@ export default function HouseholdsPage() {
   const openInviteModal = (household: Household) => {
     setHouseholdToInvite(household);
     setInviteModalOpen(true);
+  };
+
+  const openShareLinkModal = (household: Household) => {
+    setHouseholdToShare(household);
+    const baseUrl = typeof globalThis.window !== 'undefined' ? globalThis.window.location.origin : '';
+    const joinLink = `${baseUrl}/join/${household.id}`;
+    setShareLink(joinLink);
+    setShareLinkModalOpen(true);
   };
 
   const handleSendInvite = async (email: string) => {
@@ -288,9 +300,16 @@ export default function HouseholdsPage() {
                       </div>
                     )}
                     
-                    <div className="flex gap-2 justify-end">
+                    <div className="flex gap-2 justify-end flex-wrap">
                       {isAdmin(user?.role) && (
                         <>
+                          <button
+                            onClick={() => openShareLinkModal(household)}
+                            className="px-3 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
+                            title="Generate shareable link for this household"
+                          >
+                            Share
+                          </button>
                           <button
                             onClick={() => openInviteModal(household)}
                             className="px-3 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
@@ -313,7 +332,7 @@ export default function HouseholdsPage() {
                             Edit
                           </Link>
                           <button
-                            onClick={() => handleDeleteHousehold(household.id)}
+                            onClick={() => openDeleteModal(household)}
                             className="px-3 py-2 bg-gray-100 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors"
                           >
                             Delete
@@ -387,6 +406,18 @@ export default function HouseholdsPage() {
         onMemberRemoved={() => {
           setSuccess('Member removed successfully');
           setTimeout(() => setSuccess(''), 5000);
+        }}
+      />
+
+      <ShareLinkModal
+        isOpen={shareLinkModalOpen}
+        householdId={householdToShare?.id || ''}
+        householdName={householdToShare?.householdName || ''}
+        joinLink={shareLink}
+        onClose={() => {
+          setShareLinkModalOpen(false);
+          setHouseholdToShare(null);
+          setShareLink('');
         }}
       />
     </div>

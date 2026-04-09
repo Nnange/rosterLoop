@@ -1,13 +1,14 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/app/context/AuthContext'
 import Header from '@/app/components/Header'
 import Footer from '@/app/components/Footer'
 
 export default function SignupPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { signup, loading, error } = useAuth()
   const [formData, setFormData] = useState({
     email: '',
@@ -49,7 +50,8 @@ export default function SignupPage() {
 
     try {
       await signup(formData.email, formData.password, formData.firstName, formData.lastName)
-      router.push('/verification-required')
+      const redirectUrl = searchParams.get('redirect') || '/verification-required'
+      router.push(redirectUrl)
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Signup failed')
     }
