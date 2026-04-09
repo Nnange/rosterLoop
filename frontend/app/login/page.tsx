@@ -13,6 +13,8 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [formError, setFormError] = useState<string | null>(null)
+  const [failedAttempts, setFailedAttempts] = useState(0)
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,9 +27,18 @@ export default function LoginPage() {
 
     try {
       await login(email, password)
+      setFailedAttempts(0)
+      setShowForgotPassword(false)
       const redirectUrl = searchParams.get('redirect') || '/'
       router.push(redirectUrl)
     } catch (err) {
+      const newFailedAttempts = failedAttempts + 1
+      setFailedAttempts(newFailedAttempts)
+      
+      if (newFailedAttempts >= 3) {
+        setShowForgotPassword(true)
+      }
+      
       setFormError(err instanceof Error ? err.message : 'Login failed')
     }
   }
@@ -35,7 +46,7 @@ export default function LoginPage() {
   return (
     <div className="flex flex-col min-h-screen items-center justify-center pt-8">
       <Header />
-      <div className="bg-white p-8 rounded-lg shadow-md w-96">
+      <div className="bg-white p-8 rounded-lg shadow-md w-96 mb-10">
         <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
 
         {(formError || error) && (
@@ -88,6 +99,20 @@ export default function LoginPage() {
             Sign up
           </a>
         </p>
+
+        {showForgotPassword && (
+          <div className="mt-6 pt-6 border-t border-gray-300">
+            <p className="text-center text-gray-700 mb-3">
+              Trouble signing in?
+            </p>
+            <a
+              href="/forgot-password"
+              className="block w-full text-center bg-gray-100 text-indigo-600 py-2 rounded hover:bg-gray-200 transition-colors font-semibold"
+            >
+              Reset Your Password
+            </a>
+          </div>
+        )}
       </div>
       <Footer />
     </div>
