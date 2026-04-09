@@ -25,13 +25,16 @@ export default function InvitationsPage() {
   const [acceptingId, setAcceptingId] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/login')
-      return
-    }
+    if (!authLoading) {
+      if (!user) {
+        // User not authenticated, show login/signup page (set loading to false)
+        setLoading(false)
+        return
+      }
 
-    if (user && token) {
-      fetchPendingInvitations()
+      if (user && token) {
+        fetchPendingInvitations()
+      }
     }
   }, [user, token, authLoading, router])
 
@@ -137,7 +140,46 @@ export default function InvitationsPage() {
   }
 
   if (!user) {
-    return null
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <Header />
+        <main className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
+          <div className="w-full max-w-md">
+            <div className="bg-white rounded-lg shadow-md p-6 mb-6 text-center">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                You have an invitation!
+              </h2>
+              <p className="text-gray-600">
+                Log in or create an account to view and manage your invitations.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                Get Started
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Log in to your existing account or create a new one to accept your household invitation.
+              </p>
+              <div className="space-y-3">
+                <a
+                  href={`/login?redirect=${encodeURIComponent('/invitations')}`}
+                  className="block w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition font-medium"
+                >
+                  Log In
+                </a>
+                <a
+                  href={`/signup?redirect=${encodeURIComponent('/invitations')}`}
+                  className="block w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition font-medium"
+                >
+                  Sign Up
+                </a>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    )
   }
 
   return (
