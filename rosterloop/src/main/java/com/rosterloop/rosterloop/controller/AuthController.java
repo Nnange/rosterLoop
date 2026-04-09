@@ -202,4 +202,64 @@ public class AuthController {
                     .body(new ErrorResponse(e.getMessage()));
         }
     }
+
+    @PutMapping("/update-profile")
+    public ResponseEntity<Object> updateProfile(@RequestBody Map<String, String> request, Authentication authentication) {
+        try {
+            if (authentication == null || !authentication.isAuthenticated()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ErrorResponse("User not authenticated"));
+            }
+
+            String firstName = request.get("firstName");
+            String lastName = request.get("lastName");
+
+            if (firstName == null || firstName.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ErrorResponse("First name is required"));
+            }
+
+            if (lastName == null || lastName.trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ErrorResponse("Last name is required"));
+            }
+
+            User user = (User) authentication.getPrincipal();
+            authService.updateProfile(user.getId(), firstName, lastName);
+            return ResponseEntity.ok(new ErrorResponse("Profile updated successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Failed to update profile: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Object> changePassword(@RequestBody Map<String, String> request, Authentication authentication) {
+        try {
+            if (authentication == null || !authentication.isAuthenticated()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ErrorResponse("User not authenticated"));
+            }
+
+            String currentPassword = request.get("currentPassword");
+            String newPassword = request.get("newPassword");
+
+            if (currentPassword == null || currentPassword.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ErrorResponse("Current password is required"));
+            }
+
+            if (newPassword == null || newPassword.length() < 8) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ErrorResponse("New password must be at least 8 characters long"));
+            }
+
+            User user = (User) authentication.getPrincipal();
+            authService.changePassword(user.getId(), currentPassword, newPassword);
+            return ResponseEntity.ok(new ErrorResponse("Password changed successfully"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+    }
 }

@@ -9,11 +9,25 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9092/r
 
 export default function AccountSettingsPage() {
   const router = useRouter()
-  const { user, token, logout, loading } = useAuth()
+  const { user, token, logout, loading, refreshUser } = useAuth()
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const [shouldRedirect, setShouldRedirect] = useState(false)
+
+  // Edit profile state
+  const [editingProfile, setEditingProfile] = useState(false)
+  const [firstName, setFirstName] = useState(user?.firstName || '')
+  const [lastName, setLastName] = useState(user?.lastName || '')
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false)
+
+  // Change password state
+  const [showChangePassword, setShowChangePassword] = useState(false)
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [isChangingPassword, setIsChangingPassword] = useState(false)
 
   useEffect(() => {
     if (shouldRedirect) {
@@ -26,6 +40,102 @@ export default function AccountSettingsPage() {
       router.push('/login')
     }
   }, [loading, user, router])
+
+  const handleUpdateProfile = async () => {
+    if (!token) return
+
+    if (!firstName.trim() || !lastName.trim()) {
+      setError('First name and last name are required')
+      return
+    }
+
+    setIsUpdatingProfile(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/update-profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ firstName, lastName }),
+      })
+
+      if (response.ok) {
+        setSuccess('Profile updated successfully')
+        setEditingProfile(false)
+        // Refresh user data
+        if (refreshUser) {
+          await refreshUser()
+        }
+      } else {
+        const data = await response.json()
+        setError(data.message || 'Failed to update profile')
+      }
+    } catch (err) {
+      setError('Error updating profile. Please try again.')
+      console.error('Error:', err)
+    } finally {
+      setIsUpdatingProfile(false)
+    }
+  }
+
+  const handleChangePassword = async () => {
+    if (!token) return
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setError('All password fields are required')
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError('New passwords do not match')
+      return
+    }
+
+    if (newPassword.length < 8) {
+      setError('New password must be at least 8 characters long')
+      return
+    }
+
+    if (currentPassword === newPassword) {
+      setError('New password must be different from current password')
+      return
+    }
+
+    setIsChangingPassword(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      })
+
+      if (response.ok) {
+        setSuccess('Password changed successfully')
+        setShowChangePassword(false)
+        setCurrentPassword('')
+        setNewPassword('')
+        setConfirmPassword('')
+      } else {
+        const data = await response.json()
+        setError(data.message || 'Failed to change password')
+      }
+    } catch (err) {
+      setError('Error changing password. Please try again.')
+      console.error('Error:', err)
+    } finally {
+      setIsChangingPassword(false)
+    }
+  }
 
   const handleDeleteAccount = async () => {
     if (!token) return
@@ -107,6 +217,149 @@ export default function AccountSettingsPage() {
                 </p>
               </div>
             </div>
+          </div>
+
+          {(error || success) && (
+            <div className={`mb-6 p-3 rounded ${success ? 'bg-green-100 border border-green-400 text-green-700' : 'bg-red-100 border border-red-400 text-red-700'}`}>
+              {error || success}
+            </div>
+          )}
+
+          <div className="mb-8 border-t pt-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Edit Profile</h2>
+            {editingProfile ? (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    disabled={isUpdatingProfile}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    disabled={isUpdatingProfile}
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleUpdateProfile}
+                    disabled={isUpdatingProfile}
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors font-medium"
+                  >
+                    {isUpdatingProfile ? 'Saving...' : 'Save Changes'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditingProfile(false)
+                      setFirstName(user.firstName)
+                      setLastName(user.lastName)
+                      setError('')
+                    }}
+                    disabled={isUpdatingProfile}
+                    className="px-4 py-2 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 disabled:opacity-50 transition-colors font-medium"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => setEditingProfile(true)}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+              >
+                Edit Name
+              </button>
+            )}
+          </div>
+
+          <div className="mb-8 border-t pt-8">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Password</h2>
+            {showChangePassword ? (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Current Password
+                  </label>
+                  <input
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="••••••••"
+                    disabled={isChangingPassword}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="••••••••"
+                    disabled={isChangingPassword}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="••••••••"
+                    disabled={isChangingPassword}
+                  />
+                </div>
+                <p className="text-sm text-gray-600">Password must be at least 8 characters long.</p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleChangePassword}
+                    disabled={isChangingPassword}
+                    className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors font-medium"
+                  >
+                    {isChangingPassword ? 'Changing...' : 'Change Password'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowChangePassword(false)
+                      setCurrentPassword('')
+                      setNewPassword('')
+                      setConfirmPassword('')
+                      setError('')
+                    }}
+                    disabled={isChangingPassword}
+                    className="px-4 py-2 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 disabled:opacity-50 transition-colors font-medium"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowChangePassword(true)}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+              >
+                Change Password
+              </button>
+            )}
           </div>
 
           <div className="border-t pt-8">

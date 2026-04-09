@@ -226,4 +226,34 @@ public class AuthService {
         user.setResetTokenExpiresAt(null);
         userRepository.save(user);
     }
+
+    @Transactional
+    public void updateProfile(UUID userId, String firstName, String lastName) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setUpdatedAt(LocalDateTime.now());
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void changePassword(UUID userId, String currentPassword, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        // Verify current password
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new RuntimeException("Current password is incorrect");
+        }
+        
+        if (currentPassword.equals(newPassword)) {
+            throw new RuntimeException("New password must be different from current password");
+        }
+        
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setUpdatedAt(LocalDateTime.now());
+        userRepository.save(user);
+    }
 }

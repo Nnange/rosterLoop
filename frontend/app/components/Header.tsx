@@ -16,14 +16,14 @@ export default function Header() {
   return (
     <div className="w-full bg-white shadow-md mb-8">
       <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="text-center flex-1">
+        <Link href="/households" className="text-center flex-1 hover:opacity-80 transition-opacity cursor-pointer">
           <p className="text-3xl font-bold text-indigo-600 mb-1">
             Flatemate Cleaning Roster
           </p>
           <p className="text-sm text-gray-600">
             Keep your shared space clean with a fair rotation system
           </p>
-        </div>
+        </Link>
         
         {isAuthenticated && user && (
           <div className="flex items-center gap-4">
