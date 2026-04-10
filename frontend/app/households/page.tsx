@@ -93,7 +93,7 @@ export default function HouseholdsPage() {
 
   const openShareLinkModal = (household: Household) => {
     setHouseholdToShare(household);
-    const baseUrl = typeof globalThis.window !== 'undefined' ? globalThis.window.location.origin : '';
+    const baseUrl = globalThis.window !== undefined ? globalThis.window.location.origin : '';
     const joinLink = `${baseUrl}/join/${household.joinToken}`;
     setShareLink(joinLink);
     setShareLinkModalOpen(true);
@@ -169,9 +169,8 @@ export default function HouseholdsPage() {
           if (errorData.message) {
             errorMessage = errorData.message;
           }
-        } catch (parseError) {
+        } catch {
           // Response wasn't JSON, use default error message
-          console.error('Could not parse error response as JSON');
         }
         
         console.error('Delete failed with status:', response.status);

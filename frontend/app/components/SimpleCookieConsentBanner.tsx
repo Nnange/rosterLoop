@@ -109,7 +109,7 @@ function CookieBanner({ onAcceptAll, onRejectAll, onSave }: Readonly<CookieBanne
                 <a href="/privacy-policy" className="text-blue-600 hover:underline">
                   Privacy Policy
                 </a>
-                .
+                {'.'}
               </p>
             </div>
             <div className="flex gap-3 flex-wrap">

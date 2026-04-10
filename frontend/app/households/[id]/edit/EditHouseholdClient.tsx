@@ -165,10 +165,11 @@ export default function EditHouseholdClient() {
           {household && (
             <form onSubmit={handleSave} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="householdName" className="block text-sm font-medium text-gray-700 mb-2">
                   Household Name
                 </label>
                 <input
+                  id='householdName'
                   type="text"
                   value={householdName}
                   onChange={(e) => setHouseholdName(e.target.value)}
@@ -177,13 +178,14 @@ export default function EditHouseholdClient() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor={`flatmateName`} className="block text-sm font-medium text-gray-700 mb-2">
                   Flatmates
                 </label>
                 <div className="space-y-2">
                   {flatmateNames.map((name, index) => (
                     <div key={index} className="flex gap-2">
                       <input
+                        id={`flatmateName-${index}`}
                         type="text"
                         value={name}
                         onChange={(e) => {

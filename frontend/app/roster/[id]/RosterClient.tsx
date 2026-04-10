@@ -5,7 +5,7 @@ import Header from "@/app/components/Header";
 import {use, useEffect, useState} from "react";
 import { getHouseholdById } from "@/app/utils/api";
 
-export default function RosterClient({ params }: { params: Promise<{ id: string }> }) {
+export default function RosterClient({ params }: { readonly params: Promise<{ id: string }> }) {
     const { id } = use(params);
     const [roommates, setRoommates] = useState<string[]>([]);
 

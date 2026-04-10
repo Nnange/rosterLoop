@@ -2,8 +2,8 @@
 // This configuration manages user consent for different types of cookies
 
 const getCookieDomain = (): string => {
-  if (typeof window !== 'undefined') {
-    return window.location.hostname
+  if (globalThis.window !== undefined) {
+    return globalThis.window.location.hostname
   }
   return 'localhost'
 }

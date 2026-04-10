@@ -105,7 +105,7 @@ export function MonthlyCalendar({
           const dayNumber = index - startingDayOfWeek + 1
           const isValidDay = dayNumber > 0 && dayNumber <= daysInMonth
           if (!isValidDay) {
-            return <div key={index} className="aspect-square" />
+            return <div key={`empty-${displayYear}-${displayMonth}-${index}`} className="aspect-square" />
           }
           const date = new Date(displayYear, displayMonth, dayNumber)
           const isToday = date.toDateString() === today.toDateString()
@@ -115,7 +115,7 @@ export function MonthlyCalendar({
           const isWeekend = date.getDay() === 0 || date.getDay() === 6
           return (
             <div
-              key={index}
+              key={`${displayYear}-${displayMonth}-${dayNumber}`}
               className={`aspect-square p-2 rounded-lg border transition-colors ${isToday ? 'bg-indigo-600 text-white border-indigo-600' : isCurrentWeek ? 'bg-indigo-50 border-indigo-200' : isWeekend && person ? 'bg-gray-50 border-gray-200' : 'border-gray-100'}`}
             >
               <div className="flex flex-col h-full">

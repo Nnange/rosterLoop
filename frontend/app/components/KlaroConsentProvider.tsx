@@ -16,22 +16,14 @@ declare global {
 export function KlaroConsentProvider() {
   useEffect(() => {
     // Initialize Klaro with the configuration
-    try {
-      // Dynamically import Klaro to ensure it loads correctly
-      import('klaro').then((klaroModule) => {
-        const klaro = klaroModule.default || klaroModule.klaro
-        if (klaro && klaro.show) {
-          klaro.show(klaroConfig)
-          console.log('Klaro consent banner initialized')
-        } else {
-          console.warn('Klaro module loaded but show method not available')
-        }
-      }).catch((error) => {
-        console.error('Error importing Klaro:', error)
-      })
-    } catch (error) {
-      console.error('Error initializing Klaro:', error)
-    }
+    // Dynamically import Klaro to ensure it loads correctly
+    import('klaro').then((klaroModule) => {
+      const klaro = klaroModule.default || klaroModule.klaro
+      klaro?.show(klaroConfig)
+      console.log('Klaro consent banner initialized')
+    }).catch((error) => {
+      console.error('Error importing Klaro:', error)
+    })
   }, [])
 
   return null

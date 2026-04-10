@@ -14,7 +14,7 @@ export default function DeleteConfirmModal({
   isDeleting,
   onConfirm,
   onCancel,
-}: DeleteConfirmModalProps) {
+}: Readonly<DeleteConfirmModalProps>) {
   if (!isOpen) return null
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {

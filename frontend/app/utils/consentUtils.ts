@@ -6,7 +6,7 @@
  * @returns boolean - True if consent is given, false otherwise
  */
 export function hasConsent(serviceName: string): boolean {
-  if (typeof window === 'undefined') return false;
+  if (globalThis.window === undefined) return false;
 
   try {
     const consentCookie = localStorage.getItem('klaro');
@@ -54,7 +54,7 @@ export function loadGoogleAnalytics(measurementId: string): void {
     return;
   }
 
-  if (typeof window === 'undefined') return;
+  if (globalThis.window === undefined) return;
 
   // Load Google Analytics script
   const script = document.createElement('script');
@@ -63,9 +63,9 @@ export function loadGoogleAnalytics(measurementId: string): void {
   document.head.appendChild(script);
 
   // Initialize gtag
-  (window as any).dataLayer = (window as any).dataLayer || [];
+  (globalThis.window as any).dataLayer = (globalThis.window as any).dataLayer || [];
   function gtag(...args: any[]) {
-    (window as any).dataLayer.push(args);
+    (globalThis.window as any).dataLayer.push(args);
   }
   gtag('js', new Date());
   gtag('config', measurementId);
@@ -76,7 +76,7 @@ export function loadGoogleAnalytics(measurementId: string): void {
  * @returns object with service names and boolean values
  */
 export function getAllConsent(): Record<string, boolean> {
-  if (typeof window === 'undefined') return {};
+  if (globalThis.window === undefined) return {};
 
   try {
     const consentCookie = localStorage.getItem('klaro');
@@ -96,7 +96,7 @@ export function getAllConsent(): Record<string, boolean> {
  * @param consented - True or false
  */
 export function setConsent(serviceName: string, consented: boolean): void {
-  if (typeof window === 'undefined') return;
+  if (globalThis.window === undefined) return;
 
   try {
     const current = getAllConsent();
