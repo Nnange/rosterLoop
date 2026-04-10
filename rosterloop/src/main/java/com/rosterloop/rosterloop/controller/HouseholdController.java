@@ -62,6 +62,10 @@ public class HouseholdController {
 
         try {
             User owner = (User) authentication.getPrincipal();
+
+            if (owner == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
             
             // Only ROLE_ADMIN can create households
             if (!owner.getRole().equals("ROLE_ADMIN")) {
@@ -185,6 +189,10 @@ public class HouseholdController {
                     .orElseThrow(() -> new RuntimeException("Household not found"));
             
             User user = (User) authentication.getPrincipal();
+
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
             
             // Check if user is the owner
             boolean isOwner = household.getOwner().getId().equals(user.getId());
@@ -217,6 +225,10 @@ public class HouseholdController {
 
         try {
             User user = (User) authentication.getPrincipal();
+
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
             
             // Get households owned by the user
             List<Household> ownedHouseholds = householdRepository.findByOwner(user);
@@ -261,6 +273,11 @@ public class HouseholdController {
                     .orElseThrow(() -> new RuntimeException("Household not found"));
             
             User owner = (User) authentication.getPrincipal();
+
+            if (owner == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
             if (!household.getOwner().getId().equals(owner.getId())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
@@ -291,6 +308,9 @@ public class HouseholdController {
                     .orElseThrow(() -> new RuntimeException("Household not found"));
             
             User owner = (User) authentication.getPrincipal();
+            if (owner == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
             if (!household.getOwner().getId().equals(owner.getId())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }

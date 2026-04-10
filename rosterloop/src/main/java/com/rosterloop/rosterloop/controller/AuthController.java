@@ -57,6 +57,9 @@ public class AuthController {
         }
         
         User user = (User) authentication.getPrincipal();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         AuthResponse response = new AuthResponse(
                 null, // No token needed for /me endpoint
                 "Bearer",
@@ -125,6 +128,9 @@ public class AuthController {
             }
 
             User user = (User) authentication.getPrincipal();
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
             authService.deleteAccount(user.getId());
 
             return ResponseEntity.ok(new ErrorResponse("Account deleted successfully"));
@@ -225,6 +231,9 @@ public class AuthController {
             }
 
             User user = (User) authentication.getPrincipal();
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
             authService.updateProfile(user.getId(), firstName, lastName);
             return ResponseEntity.ok(new ErrorResponse("Profile updated successfully"));
         } catch (Exception e) {
@@ -255,6 +264,9 @@ public class AuthController {
             }
 
             User user = (User) authentication.getPrincipal();
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
             authService.changePassword(user.getId(), currentPassword, newPassword);
             return ResponseEntity.ok(new ErrorResponse("Password changed successfully"));
         } catch (RuntimeException e) {

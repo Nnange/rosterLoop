@@ -174,7 +174,7 @@ public class HouseholdInvitationService {
             if (LocalDateTime.now().isBefore(invitation.getExpiresAt())) {
                 // Check if the invitee is an existing user and if so, skip deleted/inactive users
                 Optional<User> inviteeUser = userRepository.findByEmail(invitation.getInviteeEmail());
-                if (inviteeUser.isPresent() && !inviteeUser.get().getIsActive()) {
+                if (inviteeUser.isPresent() && !inviteeUser.get().getIsActive().booleanValue()) {
                     // Skip this invitation if the user was deleted or is inactive
                     continue;
                 }

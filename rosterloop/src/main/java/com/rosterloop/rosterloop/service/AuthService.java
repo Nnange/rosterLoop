@@ -4,6 +4,7 @@ import com.rosterloop.rosterloop.dto.LoginRequest;
 import com.rosterloop.rosterloop.dto.SignupRequest;
 import com.rosterloop.rosterloop.dto.AuthResponse;
 import com.rosterloop.rosterloop.entity.User;
+import com.rosterloop.rosterloop.exception.AuthServiceException;
 import com.rosterloop.rosterloop.repository.UserRepository;
 import com.rosterloop.rosterloop.repository.HouseholdMemberRepository;
 import com.rosterloop.rosterloop.repository.HouseholdInvitationRepository;
@@ -51,7 +52,7 @@ public class AuthService {
 
     public AuthResponse signup(SignupRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email is already registered");
+            throw new AuthServiceException("Email is already registered");
         }
 
         User user = new User();
@@ -73,7 +74,7 @@ public class AuthService {
 
         String token = jwtTokenProvider.generateToken(savedUser.getEmail(), savedUser.getId().toString());
 
-        AuthResponse response = new AuthResponse(
+        return new AuthResponse(
                 token,
                 "Bearer",
                 3600,
@@ -84,7 +85,6 @@ public class AuthService {
                 savedUser.getRole(),
                 savedUser.getIsEmailVerified()
         );
-        return response;
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -97,23 +97,28 @@ public class AuthService {
             );
 
             User user = (User) authentication.getPrincipal();
+
+            if (user == null) {
+                throw new AuthServiceException("Authentication failed");
+            }
+            
             user.setLastLogin(LocalDateTime.now());
             userRepository.save(user);
 
             String token = jwtTokenProvider.generateToken(user.getEmail(), user.getId().toString());
 
             return new AuthResponse(
-                    token,
-                    "Bearer",
-                    3600,
-                    user.getId().toString(),
-                    user.getEmail(),
-                    user.getFirstName(),
-                    user.getLastName(),
-                    user.getRole()
+                token,
+                "Bearer",
+                3600,
+                user.getId().toString(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getRole()
             );
         } catch (Exception e) {
-            throw new RuntimeException("Invalid email or password");
+            throw new AuthServiceException("Invalid email or password");
         }
     }
 
@@ -129,7 +134,7 @@ public class AuthService {
 
     public User createAdmin(String email, String password, String firstName, String lastName) {
         if (userRepository.existsByEmail(email)) {
-            throw new RuntimeException("Email is already registered");
+            throw new AuthServiceException("Email is already registered");
         }
 
         User admin = new User();
@@ -201,15 +206,7 @@ public class AuthService {
         User user = userRepository.findByResetToken(token)
                 .orElse(null);
         
-        if (user == null) {
-            return false;
-        }
-        
-        if (user.getResetTokenExpiresAt() == null || user.getResetTokenExpiresAt().isBefore(LocalDateTime.now())) {
-            return false;
-        }
-        
-        return true;
+        return user != null && user.getResetTokenExpiresAt() != null && user.getResetTokenExpiresAt().isAfter(LocalDateTime.now());
     }
 
     @Transactional
@@ -218,7 +215,7 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("Invalid or expired reset token"));
         
         if (user.getResetTokenExpiresAt() == null || user.getResetTokenExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Reset token has expired");
+            throw new AuthServiceException("Reset token has expired");
         }
         
         user.setPassword(passwordEncoder.encode(newPassword));
@@ -245,11 +242,11 @@ public class AuthService {
         
         // Verify current password
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-            throw new RuntimeException("Current password is incorrect");
+            throw new AuthServiceException("Current password is incorrect");
         }
         
         if (currentPassword.equals(newPassword)) {
-            throw new RuntimeException("New password must be different from current password");
+            throw new AuthServiceException("New password must be different from current password");
         }
         
         user.setPassword(passwordEncoder.encode(newPassword));
