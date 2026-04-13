@@ -34,6 +34,9 @@ public class Household {
     @Column(name = "join_token_expires_at", nullable = true)
     private LocalDateTime joinTokenExpiresAt;
 
+    @Column(name = "max_members")
+    private Integer maxMembers = 0;
+
     public UUID getId() {
         return id;
     }
@@ -88,5 +91,13 @@ public class Household {
 
     public void setJoinTokenExpiresAt(LocalDateTime joinTokenExpiresAt) {
         this.joinTokenExpiresAt = joinTokenExpiresAt;
+    }
+
+    public int getMaxMembers() {
+        return maxMembers != null ? maxMembers : 0;
+    }
+
+    public void setMaxMembers(int maxMembers) {
+        this.maxMembers = maxMembers;
     }
 }

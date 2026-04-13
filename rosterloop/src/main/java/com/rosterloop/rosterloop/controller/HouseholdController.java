@@ -72,6 +72,10 @@ public class HouseholdController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
             
+            // Set maxMembers based on flatmateNames count + owner
+            int flatmateCount = household.getFlatmateNames() != null ? household.getFlatmateNames().size() : 0;
+            household.setMaxMembers(flatmateCount + 1); // +1 for the owner
+            
             household.setOwner(owner);
             household.setCreatedAt(LocalDateTime.now());
             
@@ -112,7 +116,8 @@ public class HouseholdController {
                     h.getId().toString(),
                     h.getHouseholdName(),
                     h.getOwner().getFirstName() + " " + h.getOwner().getLastName(),
-                    (int) memberCount
+                    (int) memberCount,
+                    h.getMaxMembers()
             );
             
             return ResponseEntity.ok(response);
@@ -159,6 +164,16 @@ public class HouseholdController {
             if (householdMemberRepository.existsByHouseholdIdAndUserId(h.getId(), user.getId())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
                         .body(new JoinHouseholdResponse(false, "You are already a member of this household"));
+            }
+
+            // Check if household has reached max members
+            long currentMembers = householdMemberRepository.countByHouseholdId(h.getId());
+            currentMembers += 1; // Add owner to count
+            
+            if (currentMembers >= h.getMaxMembers()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(new JoinHouseholdResponse(false, 
+                            "Household is full. Maximum members: " + h.getMaxMembers()));
             }
 
             // Add user as household member
@@ -348,12 +363,14 @@ public class HouseholdController {
         private final String name;
         private final String ownerName;
         private final int memberCount;
+        private final int maxMembers;
 
-        public HouseholdJoinInfoResponse(String id, String name, String ownerName, int memberCount) {
+        public HouseholdJoinInfoResponse(String id, String name, String ownerName, int memberCount, int maxMembers) {
             this.id = id;
             this.name = name;
             this.ownerName = ownerName;
             this.memberCount = memberCount;
+            this.maxMembers = maxMembers;
         }
 
         public String getId() {
@@ -370,6 +387,10 @@ public class HouseholdController {
 
         public int getMemberCount() {
             return memberCount;
+        }
+
+        public int getMaxMembers() {
+            return maxMembers;
         }
     }
 

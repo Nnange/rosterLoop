@@ -12,6 +12,7 @@ interface HouseholdInfo {
   name: string
   ownerName: string
   memberCount: number
+  maxMembers: number
 }
 
 type PageState = 'loading' | 'verify' | 'needs-auth' | 'processing' | 'success' | 'already-member' | 'error'
@@ -134,11 +135,23 @@ export default function JoinHouseholdClient() {
           router.push('/households')
         }, 2000)
       } else if (response.status === 409) {
-        // Already a member or owner
-        setPageState('already-member')
-        setTimeout(() => {
-          router.push('/households')
-        }, 3000)
+        const data = await response.json()
+        // Could be already a member, owner, or household is full
+        if (data?.message?.includes('full')) {
+          setPageState('error')
+          setError(data.message)
+        } else {
+          // Already a member or owner
+          setPageState('already-member')
+          setTimeout(() => {
+            router.push('/households')
+          }, 3000)
+        }
+      } else if (response.status === 400) {
+        // Could be validation error
+        const data = await response.json()
+        setPageState('error')
+        setError(data.message || 'Cannot join household. Please try again.')
       } else {
         const data = await response.json()
         setPageState('error')
@@ -285,6 +298,7 @@ export default function JoinHouseholdClient() {
   if (pageState === 'needs-auth') {
     const returnUrl = `/join/${householdToken}`
     const isNewUser = householdInfo?.memberCount === 1 // Only owner, so new user
+    const isFull = householdInfo && householdInfo.memberCount >= householdInfo.maxMembers
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -297,40 +311,74 @@ export default function JoinHouseholdClient() {
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">
                   Join {householdInfo.name}
                 </h2>
-                <p className="text-gray-600 mb-1">
+                <p className="text-gray-600 mb-3">
                   Invited by {householdInfo.ownerName}
                 </p>
-                <p className="text-sm text-gray-500">
-                  {householdInfo.memberCount} {householdInfo.memberCount === 1 ? 'member' : 'members'}
+                <p className="text-sm text-gray-700 font-medium mb-1">
+                  Members: {householdInfo.memberCount} / {householdInfo.maxMembers}
                 </p>
+                {isFull && (
+                  <p className="text-sm text-red-600 font-medium bg-red-50 p-2 rounded mt-2">
+                    This household is at capacity and cannot accept new members.
+                  </p>
+                )}
               </div>
             )}
 
-            {/* Auth Redirect Card */}
-            <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">
-                {isNewUser ? 'Create Account to Join' : 'Log In to Join'}
-              </h3>
-              <p className="text-gray-600 mb-6">
-                {isNewUser
-                  ? 'Create an account to join this household'
-                  : 'Log in with your account to join this household'}
-              </p>
-              <div className="space-y-3">
-                <a
-                  href={`/signup?redirect=${encodeURIComponent(returnUrl)}`}
-                  className="block w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition font-medium"
-                >
-                  Sign Up
-                </a>
-                <a
-                  href={`/login?redirect=${encodeURIComponent(returnUrl)}`}
-                  className="block w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition font-medium"
-                >
-                  Log In
-                </a>
+            {/* Auth Redirect Card - Only show if not full */}
+            {!isFull && (
+              <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  {isNewUser ? 'Create Account to Join' : 'Log In to Join'}
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  {isNewUser
+                    ? 'Create an account to join this household'
+                    : 'Log in with your account to join this household'}
+                </p>
+                <div className="space-y-3">
+                  <a
+                    href={`/signup?redirect=${encodeURIComponent(returnUrl)}`}
+                    className="block w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition font-medium"
+                  >
+                    Sign Up
+                  </a>
+                  <a
+                    href={`/login?redirect=${encodeURIComponent(returnUrl)}`}
+                    className="block w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition font-medium"
+                  >
+                    Log In
+                  </a>
+                </div>
               </div>
-            </div>
+            )}
+
+            {/* Full Household - Cannot Join */}
+            {isFull && (
+              <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+                <div className="mb-4">
+                  <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto">
+                    <svg
+                      className="w-8 h-8 text-yellow-600"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Household Full
+                </h3>
+                <p className="text-gray-600">
+                  Unfortunately, this household has reached its maximum capacity and cannot accept new members.
+                </p>
+              </div>
+            )}
           </div>
         </main>
       </div>
