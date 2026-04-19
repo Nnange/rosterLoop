@@ -13,7 +13,6 @@ export default function RosterClient({ params }: { readonly params: Promise<{ id
         const fetchData = async () => {
             try {
                 const data = await getHouseholdById(id);
-                console.log('Fetched household data:', data);
                 setRoommates(data.flatmateNames);
             } catch (error) {
                 console.error('Error fetching household data:', error);

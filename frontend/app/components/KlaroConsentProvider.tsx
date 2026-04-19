@@ -20,7 +20,6 @@ export function KlaroConsentProvider() {
     import('klaro').then((klaroModule) => {
       const klaro = klaroModule.default || klaroModule.klaro
       klaro?.show(klaroConfig)
-      console.log('Klaro consent banner initialized')
     }).catch((error) => {
       console.error('Error importing Klaro:', error)
     })

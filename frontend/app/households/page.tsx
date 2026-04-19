@@ -137,9 +137,6 @@ export default function HouseholdsPage() {
 
     setIsDeleting(true);
     try {
-      console.log('Deleting household:', householdToDelete.id);
-      console.log('Token:', token ? 'Present' : 'Missing');
-      
       const response = await fetch(
         `${API_BASE_URL}/households/${householdToDelete.id}`,
         {
@@ -151,11 +148,8 @@ export default function HouseholdsPage() {
         }
       );
 
-      console.log('Delete response status:', response.status);
-
       if (response.ok) {
         const data = await response.json();
-        console.log('Delete response:', data);
         
         setHouseholds(households.filter(h => h.id !== householdToDelete.id));
         setDeleteModalOpen(false);

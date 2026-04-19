@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react'
 import {
     generateYearlySchedule,
-    getWeekNumber,
     formatWeekendRange,
+    getWeekNumber,
 } from '../utils/scheduleGenerator';
 import { MonthlyCalendar } from './MonthlyCalendar';
 
@@ -16,28 +16,41 @@ export function CleaningSchedule({ roommates }: Readonly<CleaningScheduleProps>)
         Array<{
             date: Date
             person: string
+            weekIndex: number
+            weekNumber: number
         }>
     >([])
-    const [currentWeek, setCurrentWeek] = useState<number>(0)
+    const [currentWeekIndex, setCurrentWeekIndex] = useState<number>(0)
     const [viewMode, setViewMode] = useState<'current' | 'all'>('current')
+    
     useEffect(() => {
-        setSchedule(generateYearlySchedule(roommates))
-        setCurrentWeek(getWeekNumber(new Date()))
+        const generatedSchedule = generateYearlySchedule(roommates)
+        setSchedule(generatedSchedule)
+        
+        // Find the current week by matching the current date's week number
+        if (generatedSchedule.length > 0) {
+            const currentWeekNum = getWeekNumber(new Date())
+            const currentItem = generatedSchedule.find(item => item.weekNumber === currentWeekNum)
+            if (currentItem) {
+                setCurrentWeekIndex(currentItem.weekIndex)
+            }
+        }
     }, [roommates])
+    
     const currentPersonOnDuty =
-        schedule.find((item) => getWeekNumber(item.date) === currentWeek)?.person ||
+        schedule.find((item) => item.weekIndex === currentWeekIndex)?.person ||
         'Loading...'
     const currentWeekendDate = schedule.find(
-        (item) => getWeekNumber(item.date) === currentWeek,
+        (item) => item.weekIndex === currentWeekIndex,
     )?.date
     const nextPersonOnDuty =
-        schedule.find((item) => getWeekNumber(item.date) === currentWeek + 1)
+        schedule.find((item) => item.weekIndex === currentWeekIndex + 1)
             ?.person || 'Loading...'
 
     return (
 
         <div className='flex flex-col lg:px-6 lg:flex-row lg:space-x-6 lg:justify-center lg:items-start lg:w-full'>
-            <MonthlyCalendar schedule={schedule} currentWeek={currentWeek} />
+            <MonthlyCalendar schedule={schedule} currentWeekIndex={currentWeekIndex} />
 
             <div className="bg-white rounded-lg shadow-md overflow-hidden lg:w-[50%] mb-6">
                 <div className="p-6 border-b">
@@ -57,7 +70,7 @@ export function CleaningSchedule({ roommates }: Readonly<CleaningScheduleProps>)
                                 <p className="text-gray-600">
                                     {currentWeekendDate
                                         ? formatWeekendRange(currentWeekendDate)
-                                        : `Week ${currentWeek}`}
+                                        : `Week ${currentWeekIndex}`}
                                 </p>
                             </div>
                         </div>
@@ -72,7 +85,7 @@ export function CleaningSchedule({ roommates }: Readonly<CleaningScheduleProps>)
                             </div>
                             <div className="ml-4">
                                 <p className="text-lg font-medium">{nextPersonOnDuty}</p>
-                                <p className="text-gray-500">Week {currentWeek + 1}</p>
+                                <p className="text-gray-500">Week {schedule.find((item) => item.weekIndex === currentWeekIndex + 1)?.weekNumber || 'N/A'}</p>
                             </div>
                         </div>
                     </div>
@@ -100,13 +113,12 @@ export function CleaningSchedule({ roommates }: Readonly<CleaningScheduleProps>)
                     {schedule
                         .filter((item) => {
                             if (viewMode === 'current') {
-                                const itemWeek = getWeekNumber(item.date)
-                                return itemWeek >= currentWeek && itemWeek < currentWeek + 4
+                                return item.weekIndex >= currentWeekIndex && item.weekIndex < currentWeekIndex + 4
                             }
                             return true
                         })
                         .map((item, index) => {
-                            const isCurrentWeek = getWeekNumber(item.date) === currentWeek
+                            const isCurrentWeek = item.weekIndex === currentWeekIndex
                             return (
                                 <div
                                     key={index}
@@ -121,7 +133,7 @@ export function CleaningSchedule({ roommates }: Readonly<CleaningScheduleProps>)
                                         <span className="font-medium">{item.person}</span>
                                     </div>
                                     <div className="text-gray-500 text-sm">
-                                        <span>Week {getWeekNumber(item.date)}</span>
+                                        <span>Week {item.weekNumber}</span>
                                         <span className="mx-1">•</span>
                                         <span>{formatWeekendRange(item.date)}</span>
                                     </div>

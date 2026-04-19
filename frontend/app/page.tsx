@@ -31,7 +31,6 @@ export default function Home() {
 
   const checkMembershipStatus = async () => {
     if (!token) {
-      console.log('No token available, redirecting to waiting');
       setRedirecting(true);
       setMembershipChecked(true);
       router.push('/waiting');
@@ -39,7 +38,6 @@ export default function Home() {
     }
 
     try {
-      console.log('Checking membership status with token...');
       const response = await fetch(
         `${API_BASE_URL}/households/member/status`,
         {
@@ -52,22 +50,16 @@ export default function Home() {
         }
       );
 
-      console.log('Membership status response:', response.status);
-      
       if (response.ok) {
         const data = await response.json();
-        console.log('Membership data:', data);
         setRedirecting(true);
         setMembershipChecked(true);
         if (data.hasMembership) {
-          console.log('User is a member, redirecting to households');
           router.push('/households');
         } else {
-          console.log('User has no membership, redirecting to waiting');
           router.push('/waiting');
         }
       } else {
-        console.log('Membership status check failed, response:', response.status);
         setRedirecting(true);
         setMembershipChecked(true);
         router.push('/waiting');

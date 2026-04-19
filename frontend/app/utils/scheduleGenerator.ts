@@ -1,20 +1,30 @@
-// Generate weekend dates for a full year
+// Generate weekend dates for a full year (past and future)
 export function generateYearlySchedule(
     roommates: string[],
-): Array<{ date: Date; person: string }> {
+): Array<{ date: Date; person: string; weekIndex: number; weekNumber: number }> {
     if (!roommates.length) return []
-    const schedule: Array<{ date: Date; person: string }> = []
+    const schedule: Array<{ date: Date; person: string; weekIndex: number; weekNumber: number }> = []
+    
     const currentDate = new Date()
-    // Start from the current week's Saturday
+    // change current date to next week Friday 
+    const nextFriday = new Date(currentDate)
+    nextFriday.setDate(currentDate.getDate() + (5 - currentDate.getDay() + 7) % 7)
+
+    // Start from 26 weeks ago (past) to show history
     const startDate = getNextSaturday(currentDate)
-    // Generate 52 weekends (one year)
-    for (let i = 0; i < 52; i++) {
-        const saturday = new Date(startDate)
-        saturday.setDate(startDate.getDate() + i * 7)
+    const pastStartDate = new Date(startDate)
+    pastStartDate.setDate(startDate.getDate() - 26 * 7) // 26 weeks in the past
+    
+    // Generate 52 weekends from 26 weeks ago to 26 weeks in the future
+    for (let i = 0; i < 104; i++) {
+        const saturday = new Date(pastStartDate)
+        saturday.setDate(pastStartDate.getDate() + i * 7)
         const personIndex = i % roommates.length
         schedule.push({
             date: saturday,
             person: roommates[personIndex],
+            weekIndex: i - 26, // Adjust so current week is approximately index 0
+            weekNumber: getWeekNumber(saturday),
         })
     }
     return schedule
@@ -28,6 +38,24 @@ export function getNextSaturday(date: Date): Date {
     resultDate.setDate(resultDate.getDate() + daysUntilSaturday)
     return resultDate
 }
+
+// Get the week index from a start date (weeks are counted from the schedule's start Saturday)
+export function getWeekIndexFromStartDate(
+    date: Date,
+    scheduleStartDate: Date,
+): number {
+    const dateAtMidnight = new Date(date)
+    dateAtMidnight.setHours(0, 0, 0, 0)
+    
+    const startAtMidnight = new Date(scheduleStartDate)
+    startAtMidnight.setHours(0, 0, 0, 0)
+    
+    const diffTime = dateAtMidnight.getTime() - startAtMidnight.getTime()
+    const diffWeeks = Math.floor(diffTime / (7 * 24 * 60 * 60 * 1000))
+    
+    return diffWeeks
+}
+
 // Get the upcoming weekend date (Saturday) - keeping for backward compatibility
 export function getNextWeekendDate(date: Date): Date {
     return getNextSaturday(date)

@@ -50,7 +50,6 @@ export function hasMarketingConsent(): boolean {
  */
 export function loadGoogleAnalytics(measurementId: string): void {
   if (!hasAnalyticsConsent()) {
-    console.log('Google Analytics: Consent not given');
     return;
   }
 
