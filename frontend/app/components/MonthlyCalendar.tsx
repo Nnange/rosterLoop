@@ -36,10 +36,32 @@ export function MonthlyCalendar({
   const getPersonForDate = (date: Date): string | null => {
     if (schedule.length === 0) return null
     
-    const weekIndex = getWeekIndexFromStartDate(date, schedule[0].date)
-    const scheduleItem = schedule.find(
-      (item) => item.weekIndex === weekIndex,
-    )
+    // Find the Saturday of the week containing this date
+    // Saturday is day 6, Sunday is day 0
+    const dayOfWeek = date.getDay()
+    const saturday = new Date(date)
+    
+    if (dayOfWeek === 0) {
+      // If it's Sunday, get Saturday from the SAME week (go back 1 day)
+      saturday.setDate(date.getDate() - 1)
+    } else if (dayOfWeek === 6) {
+      // If it's Saturday, use this date
+      // (no change needed)
+    } else {
+      // For other weekdays, calculate forward to Saturday
+      const daysUntilSaturday = 6 - dayOfWeek
+      saturday.setDate(date.getDate() + daysUntilSaturday)
+    }
+    
+    saturday.setHours(0, 0, 0, 0)
+    
+    // Find the schedule item with matching Saturday date
+    const scheduleItem = schedule.find((item) => {
+      const itemDate = new Date(item.date)
+      itemDate.setHours(0, 0, 0, 0)
+      return itemDate.getTime() === saturday.getTime()
+    })
+    
     return scheduleItem ? scheduleItem.person : null
   }
   
