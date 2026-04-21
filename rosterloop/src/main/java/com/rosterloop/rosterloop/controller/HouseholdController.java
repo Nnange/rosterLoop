@@ -6,6 +6,7 @@ import com.rosterloop.rosterloop.entity.User;
 import com.rosterloop.rosterloop.repository.HouseholdMemberRepository;
 import com.rosterloop.rosterloop.repository.HouseholdRepository;
 import com.rosterloop.rosterloop.repository.HouseholdInvitationRepository;
+import com.rosterloop.rosterloop.service.HouseholdSecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -25,13 +26,16 @@ public class HouseholdController {
     private final HouseholdRepository householdRepository;
     private final HouseholdMemberRepository householdMemberRepository;
     private final HouseholdInvitationRepository householdInvitationRepository;
+    private final HouseholdSecurityService householdSecurityService;
 
     public HouseholdController(HouseholdRepository householdRepository, 
                             HouseholdMemberRepository householdMemberRepository,
-                            HouseholdInvitationRepository householdInvitationRepository) {
+                            HouseholdInvitationRepository householdInvitationRepository,
+                            HouseholdSecurityService householdSecurityService) {
         this.householdRepository = householdRepository;
         this.householdMemberRepository = householdMemberRepository;
         this.householdInvitationRepository = householdInvitationRepository;
+        this.householdSecurityService = householdSecurityService;
     }
 
     @GetMapping("/member/status")
@@ -209,13 +213,9 @@ public class HouseholdController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
             
-            // Check if user is the owner
-            boolean isOwner = household.getOwner().getId().equals(user.getId());
-            
-            // Check if user is a member
-            boolean isMember = householdMemberRepository.existsByHouseholdIdAndUserId(id, user.getId());
-            
-            if (!isOwner && !isMember) {
+            // ✅ ROW-LEVEL SECURITY CHECK
+            // User can only view if they're the owner or a member
+            if (!householdSecurityService.canViewHousehold(user, household)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
@@ -322,11 +322,14 @@ public class HouseholdController {
             Household household = householdRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Household not found"));
             
-            User owner = (User) authentication.getPrincipal();
-            if (owner == null) {
+            User user = (User) authentication.getPrincipal();
+            if (user == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
-            if (!household.getOwner().getId().equals(owner.getId())) {
+            
+            // ✅ ROW-LEVEL SECURITY CHECK
+            // Only owner can delete
+            if (!householdSecurityService.canDeleteHousehold(user, household)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 

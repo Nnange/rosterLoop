@@ -12,4 +12,5 @@ public interface HouseholdRepository extends JpaRepository<Household, UUID> {
     Optional<Household> findById(UUID id);
     List<Household> findByOwner(User owner);
     Optional<Household> findByJoinToken(String joinToken);
+    List<Household> findByOwnerId(UUID ownerId);  // ✅ NEW: Find by owner ID
 }
