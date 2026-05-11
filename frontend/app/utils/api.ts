@@ -9,9 +9,24 @@ export const api = axios.create({
   },
 });
 
-// Add token to requests
+// Add token to requests and check for expiration
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('authToken');
+  const tokenExpiry = localStorage.getItem('tokenExpiry');
+  
+  // Check if token has expired
+  if (tokenExpiry) {
+    const expiryTime = Number.parseInt(tokenExpiry, 10)
+    if (Date.now() > expiryTime) {
+      // Token expired, clear auth data and redirect to login
+      localStorage.removeItem('authToken')
+      localStorage.removeItem('authUser')
+      localStorage.removeItem('tokenExpiry')
+      globalThis.location.href = '/login'
+      return Promise.reject(new Error('Token expired'))
+    }
+  }
+  
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

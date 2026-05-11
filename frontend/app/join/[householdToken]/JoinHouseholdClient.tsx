@@ -4,8 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useAuth } from '@/app/context/AuthContext'
 import Header from '@/app/components/Header'
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9092/rosterloop/api';
+import { api } from '@/app/utils/api' // 🔒 Secure API with HTTPOnly cookies
 
 interface HouseholdInfo {
   id: string
@@ -20,7 +19,7 @@ type PageState = 'loading' | 'verify' | 'needs-auth' | 'processing' | 'success' 
 export default function JoinHouseholdClient() {
   const params = useParams()
   const router = useRouter()
-  const { user, token, loading: authLoading, refreshUser } = useAuth()
+  const { user, loading: authLoading, refreshUser } = useAuth() // 🔒 Removed token - HTTPOnly cookies
   
   const [pageState, setPageState] = useState<PageState>('loading')
   const [householdInfo, setHouseholdInfo] = useState<HouseholdInfo | null>(null)
@@ -32,71 +31,62 @@ export default function JoinHouseholdClient() {
 
   // Refresh user data on mount to get latest emailVerified status
   useEffect(() => {
-    if (token && !hasRefreshed) {
+    // 🔒 Refresh user if authenticated (HTTPOnly cookies handle authentication)
+    if (user && !hasRefreshed) {
       refreshUser().then(() => setHasRefreshed(true))
     }
-  }, [token, hasRefreshed, refreshUser])
+  }, [user, hasRefreshed, refreshUser])
 
   // Step 1: Verify the household token and get household info
   useEffect(() => {
     if (!householdToken) return
-    // Wait for user refresh if we have a token
-    if (token && !hasRefreshed) return
+    // Wait for user refresh if we have a user
+    if (user && !hasRefreshed) return
 
     const verifyToken = async () => {
       try {
-        const response = await fetch(
-          `${API_BASE_URL}/households/join/verify/${householdToken}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+        // 🔒 Use secure API utility with HTTPOnly cookies
+        const response = await api.get(`/households/join/verify/${householdToken}`)
+        
+        const data = response.data
+        setHouseholdInfo(data)
+        
+        // If user is already authenticated, check if email is verified
+        if (user && !authLoading) {
+          // Check if user has verified their email
+          if (!user.emailVerified) {
+            // Store the return URL and redirect to verification-required page
+            const returnUrl = `/join/${householdToken}`
+            localStorage.setItem('pendingReturnUrl', returnUrl)
+            router.push(`/verification-required?returnUrl=${encodeURIComponent(returnUrl)}`)
+            return
           }
-        )
-
-        if (response.ok) {
-          const data = await response.json()
-          setHouseholdInfo(data)
-          
-          // If user is already authenticated, check if email is verified
-          if (user && token && !authLoading) {
-            // Check if user has verified their email
-            if (!user.emailVerified) {
-              // Store the return URL and redirect to verification-required page
-              const returnUrl = `/join/${householdToken}`
-              localStorage.setItem('pendingReturnUrl', returnUrl)
-              router.push(`/verification-required?returnUrl=${encodeURIComponent(returnUrl)}`)
-              return
-            }
-            joinHousehold(token)
-          } else if (!authLoading) {
-            // Redirect to login/signup with return URL
-            setPageState('needs-auth')
-          }
-        } else if (response.status === 404) {
+          joinHousehold()
+        } else if (!authLoading) {
+          // Redirect to login/signup with return URL
+          setPageState('needs-auth')
+        }
+      } catch (err: any) {
+        if (err.response?.status === 404) {
           setPageState('error')
           setError('Invalid or expired join link. Please check the link and try again.')
         } else {
           setPageState('error')
           setError('Failed to verify join link. Please try again.')
+          console.error('Verification error:', err)
         }
-      } catch (err) {
-        setPageState('error')
-        setError('Error verifying join link. Please try again.')
-        console.error('Verification error:', err)
       }
     }
 
     verifyToken()
-  }, [householdToken, authLoading, hasRefreshed, token, user, router])
+  }, [householdToken, authLoading, hasRefreshed, user, router])
 
   // Step 2: If user logs in/signs up, automatically join household
   useEffect(() => {
-    // Wait for user refresh if we have a token
-    if (token && !hasRefreshed) return
+    // Wait for user refresh if we have a user
+    if (user && !hasRefreshed) return
     
-    if (user && token && !authLoading && pageState !== 'success' && pageState !== 'processing') {
+    if (user && !authLoading && pageState !== 'success' && pageState !== 'processing') {
       // Check if user has verified their email
       if (!user.emailVerified) {
         // Store the return URL and redirect to verification-required page
@@ -105,37 +95,30 @@ export default function JoinHouseholdClient() {
         router.push(`/verification-required?returnUrl=${encodeURIComponent(returnUrl)}`)
         return
       }
-      joinHousehold(token)
+      // 🔒 HTTPOnly cookies handle authentication automatically
+      joinHousehold()
     }
-  }, [user, token, authLoading, hasRefreshed, householdToken, pageState, router])
+  }, [user, authLoading, hasRefreshed, householdToken, pageState, router])
 
   // Step 3: Join the household
-  const joinHousehold = async (authToken: string) => {
+  const joinHousehold = async () => {
     // Prevent duplicate join calls
     if (isJoiningRef.current) return
     isJoiningRef.current = true
     
     setPageState('processing')
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/households/join/${householdToken}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      )
-
-      if (response.ok) {
-        setPageState('success')
-        // Redirect to households page after 2 seconds
-        setTimeout(() => {
-          router.push('/households')
-        }, 2000)
-      } else if (response.status === 409) {
-        const data = await response.json()
+      // 🔒 Use secure API utility with HTTPOnly cookies
+      await api.post(`/households/join/${householdToken}`)
+      
+      setPageState('success')
+      // Redirect to households page after 2 seconds
+      setTimeout(() => {
+        router.push('/households')
+      }, 2000)
+    } catch (err: any) {
+      if (err.response?.status === 409) {
+        const data = err.response.data
         // Could be already a member, owner, or household is full
         if (data?.message?.includes('full')) {
           setPageState('error')
@@ -147,20 +130,19 @@ export default function JoinHouseholdClient() {
             router.push('/households')
           }, 3000)
         }
-      } else if (response.status === 400) {
+      } else if (err.response?.status === 400) {
         // Could be validation error
-        const data = await response.json()
+        const data = err.response.data
         setPageState('error')
         setError(data.message || 'Cannot join household. Please try again.')
       } else {
-        const data = await response.json()
+        const data = err.response?.data
         setPageState('error')
-        setError(data.message || 'Failed to join household')
+        setError(data?.message || 'Failed to join household')
+        console.error('Join error:', err)
       }
-    } catch (err) {
-      setPageState('error')
-      setError('Error joining household. Please try again.')
-      console.error('Join error:', err)
+    } finally {
+      isJoiningRef.current = false
     }
   }
 

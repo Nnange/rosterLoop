@@ -14,6 +14,7 @@ interface AuthContextType {
   refreshUser: () => Promise<void>
   loading: boolean
   error: string | null
+  isTokenExpired: () => boolean
 }
 
 interface AuthUser {
@@ -37,10 +38,27 @@ export function AuthProvider({ children }: { readonly children: React.ReactNode 
   useEffect(() => {
     const storedToken = localStorage.getItem('authToken')
     const storedUser = localStorage.getItem('authUser')
+    const tokenExpiry = localStorage.getItem('tokenExpiry')
     
     if (storedToken && storedUser) {
-      setToken(storedToken)
-      setUser(JSON.parse(storedUser))
+      // Check if token has expired
+      if (tokenExpiry) {
+        const expiryTime = Number.parseInt(tokenExpiry, 10)
+        const currentTime = Date.now()
+        
+        if (currentTime > expiryTime) {
+          // Token has expired, logout automatically
+          localStorage.removeItem('authToken')
+          localStorage.removeItem('authUser')
+          localStorage.removeItem('tokenExpiry')
+        } else {
+          setToken(storedToken)
+          setUser(JSON.parse(storedUser))
+        }
+      } else {
+        setToken(storedToken)
+        setUser(JSON.parse(storedUser))
+      }
     }
     setLoading(false)
   }, [])
@@ -59,7 +77,14 @@ export function AuthProvider({ children }: { readonly children: React.ReactNode 
       })
 
       if (!response.ok) {
-        throw new Error('Invalid email or password')
+        let errorMessage = 'Invalid email or password'
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.message || errorMessage
+        } catch {
+          // If response body is not JSON, use default message
+        }
+        throw new Error(errorMessage)
       }
 
       const data = await response.json()
@@ -75,8 +100,11 @@ export function AuthProvider({ children }: { readonly children: React.ReactNode 
       setToken(data.accessToken)
       setUser(authUser)
       
+      // Store token expiry time (expiresIn is in seconds, convert to milliseconds)
+      const expiryTime = Date.now() + (data.expiresIn * 1000)
       localStorage.setItem('authToken', data.accessToken)
       localStorage.setItem('authUser', JSON.stringify(authUser))
+      localStorage.setItem('tokenExpiry', expiryTime.toString())
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Login failed'
       setError(errorMessage)
@@ -100,7 +128,14 @@ export function AuthProvider({ children }: { readonly children: React.ReactNode 
       })
 
       if (!response.ok) {
-        throw new Error('Signup failed')
+        let errorMessage = 'Signup failed'
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.message || errorMessage
+        } catch {
+          // If response body is not JSON, use default message
+        }
+        throw new Error(errorMessage)
       }
 
       const data = await response.json()
@@ -117,8 +152,11 @@ export function AuthProvider({ children }: { readonly children: React.ReactNode 
       setToken(data.accessToken)
       setUser(authUser)
       
+      // Store token expiry time (expiresIn is in seconds, convert to milliseconds)
+      const expiryTime = Date.now() + (data.expiresIn * 1000)
       localStorage.setItem('authToken', data.accessToken)
       localStorage.setItem('authUser', JSON.stringify(authUser))
+      localStorage.setItem('tokenExpiry', expiryTime.toString())
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Signup failed'
       setError(errorMessage)
@@ -134,7 +172,38 @@ export function AuthProvider({ children }: { readonly children: React.ReactNode 
     setError(null)
     localStorage.removeItem('authToken')
     localStorage.removeItem('authUser')
+    localStorage.removeItem('tokenExpiry')
   }, [])
+
+  // Check if token is expired
+  const isTokenExpired = useCallback(() => {
+    const tokenExpiry = localStorage.getItem('tokenExpiry')
+    if (!tokenExpiry) return false
+    
+    const expiryTime = Number.parseInt(tokenExpiry, 10)
+    return Date.now() > expiryTime
+  }, [])
+
+  // Monitor token expiration and auto-logout
+  useEffect(() => {
+    if (!token) return
+
+    // Check immediately
+    if (isTokenExpired()) {
+      logout()
+      return
+    }
+
+    // Set up a polling interval to check token expiration every 10 seconds
+    const expiryCheckInterval = setInterval(() => {
+      if (isTokenExpired()) {
+        console.warn('Token has expired. Logging out automatically.')
+        logout()
+      }
+    }, 10000) // Check every 10 seconds
+
+    return () => clearInterval(expiryCheckInterval)
+  }, [token, logout, isTokenExpired])
 
   const refreshUser = useCallback(async () => {
     const storedToken = localStorage.getItem('authToken')
@@ -178,8 +247,9 @@ export function AuthProvider({ children }: { readonly children: React.ReactNode 
       refreshUser,
       loading,
       error,
+      isTokenExpired,
     }),
-    [user, token, login, signup, logout, refreshUser, loading, error]
+    [user, token, login, signup, logout, refreshUser, loading, error, isTokenExpired]
   )
 
   return (

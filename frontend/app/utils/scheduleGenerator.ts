@@ -5,17 +5,13 @@ export function generateYearlySchedule(
     if (!roommates.length) return []
     const schedule: Array<{ date: Date; person: string; weekIndex: number; weekNumber: number }> = []
     
-    const currentDate = new Date()
-    // change current date to next week Friday 
-    const nextFriday = new Date(currentDate)
-    nextFriday.setDate(currentDate.getDate() + (5 - currentDate.getDay() + 7) % 7)
+    // Use a fixed anchor date so the schedule is deterministic and doesn't shift
+    // Use the first Saturday of 2026 as the anchor
+    const anchorDate = new Date('2026-01-03T00:00:00Z') // Jan 3, 2026 is a Saturday
+    const pastStartDate = new Date(anchorDate)
+    pastStartDate.setDate(anchorDate.getDate() - 26 * 7) // 26 weeks in the past
 
-    // Start from 26 weeks ago (past) to show history
-    const startDate = getNextSaturday(currentDate)
-    const pastStartDate = new Date(startDate)
-    pastStartDate.setDate(startDate.getDate() - 26 * 7) // 26 weeks in the past
-    
-    // Generate 52 weekends from 26 weeks ago to 26 weeks in the future
+    // Generate 104 weekends (52 past, 52 future)
     for (let i = 0; i < 104; i++) {
         const saturday = new Date(pastStartDate)
         saturday.setDate(pastStartDate.getDate() + i * 7)
