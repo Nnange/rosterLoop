@@ -4,3 +4,8 @@ rosterloop/src/main/resources/secrets.properties
 .env
 .env.local
 frontend/.env.local
+.claude
+.github
+.vscode/
+graphify-out/
+CLAUDE.md
