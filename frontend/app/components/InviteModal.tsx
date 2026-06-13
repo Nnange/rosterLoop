@@ -67,9 +67,14 @@ export default function InviteModal({
       onClick={handleBackdropClick}
       onKeyDown={handleKeyDown}
     >
-      <div className="bg-white rounded-lg shadow-lg p-6 max-w-md mx-4">
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">Invite to Household</h2>
-        <p className="text-gray-600 mb-4">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="invite-modal-title"
+        className="bg-white rounded-lg shadow-lg p-6 max-w-md mx-4 dark:bg-gray-800 dark:shadow-black/40"
+      >
+        <h2 id="invite-modal-title" className="text-lg font-semibold text-gray-900 mb-2 dark:text-gray-100">Invite to Household</h2>
+        <p className="text-gray-600 mb-4 dark:text-gray-400">
           Invite a user to <strong>{householdName}</strong>
         </p>
 
@@ -79,12 +84,12 @@ export default function InviteModal({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter email address"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
             disabled={isInviting}
           />
 
           {error && (
-            <p className="text-red-600 text-sm mb-4">{error}</p>
+            <p className="text-red-600 text-sm mb-4 dark:text-red-400">{error}</p>
           )}
 
           <div className="flex gap-3 justify-end">
@@ -92,7 +97,7 @@ export default function InviteModal({
               type="button"
               onClick={onCancel}
               disabled={isInviting}
-              className="px-4 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
             >
               Cancel
             </button>

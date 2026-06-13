@@ -41,7 +41,7 @@ export function SetupForm({ onComplete, onBack }: Readonly<SetupFormProps>) {
         onComplete(names);
     }
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md m-6 min-w-[70%]">
+        <div className="bg-white p-6 rounded-lg shadow-md m-6 min-w-[70%] dark:bg-gray-800 dark:shadow-black/30">
             {step === 1 && (
                 <div>
                     <h2 className="text-xl font-semibold mb-4 text-center">
@@ -54,10 +54,10 @@ export function SetupForm({ onComplete, onBack }: Readonly<SetupFormProps>) {
                                 min="1"
                                 value={count}
                                 onChange={(e) => setCount(Number.parseInt(e.target.value) || 0)}
-                                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
                             />
                         </div>
-                        {error && <p className="text-red-500 mb-4">{error}</p>}
+                        {error && <p className="text-red-500 mb-4 dark:text-red-400">{error}</p>}
                         <div className="flex gap-3">
                             {onBack && (
                                 <button
@@ -84,24 +84,24 @@ export function SetupForm({ onComplete, onBack }: Readonly<SetupFormProps>) {
                     <form onSubmit={handleNamesSubmit}>
                         {names.map((name, index) => (
                             <div key={index} className="mb-3">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
                                     Person {index + 1}
                                 </label>
                                 <input
                                     type="text"
                                     value={name}
                                     onChange={(e) => handleNameChange(index, e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
                                     placeholder="Enter name"
                                 />
                             </div>
                         ))}
-                        {error && <p className="text-red-500 mb-4">{error}</p>}
+                        {error && <p className="text-red-500 mb-4 dark:text-red-400">{error}</p>}
                         <div className="flex gap-3">
                             <button
                                 type="button"
                                 onClick={() => setStep(1)}
-                                className="flex-1 bg-gray-200 text-gray-800 py-2 rounded hover:bg-gray-300 transition-colors"
+                                className="flex-1 bg-gray-200 text-gray-800 py-2 rounded hover:bg-gray-300 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                             >
                                 Back
                             </button>

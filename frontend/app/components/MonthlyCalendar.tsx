@@ -97,26 +97,26 @@ export function MonthlyCalendar({
   }
   
   return (
-    <div className="bg-white rounded-lg shadow-md p-2 md:p-6 mb-6 w-full md:w-[50%]">
+    <div className="bg-white rounded-lg shadow-md p-2 md:p-6 mb-6 w-full md:w-[50%] dark:bg-gray-800 dark:shadow-black/30">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-3 md:mb-4 gap-2">
         <h3 className="text-lg md:text-xl font-semibold">{monthName}</h3>
         <div className="flex items-center gap-1 md:gap-2 w-full md:w-auto">
           <button
             onClick={goToPreviousMonth}
-            className="p-1 md:p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1 md:p-2 hover:bg-gray-100 rounded-lg transition-colors dark:hover:bg-gray-700"
             aria-label="Previous month"
           >
             <ChevronLeftIcon className="w-4 h-4 md:w-5 md:h-5" />
           </button>
           <button
             onClick={goToToday}
-            className="px-2 md:px-3 py-1 text-xs md:text-sm hover:bg-gray-100 rounded-lg transition-colors whitespace-nowrap"
+            className="px-2 md:px-3 py-1 text-xs md:text-sm hover:bg-gray-100 rounded-lg transition-colors whitespace-nowrap dark:hover:bg-gray-700"
           >
             Today
           </button>
           <button
             onClick={goToNextMonth}
-            className="p-1 md:p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1 md:p-2 hover:bg-gray-100 rounded-lg transition-colors dark:hover:bg-gray-700"
             aria-label="Next month"
           >
             <ChevronRightIcon className="w-4 h-4 md:w-5 md:h-5" />
@@ -128,7 +128,7 @@ export function MonthlyCalendar({
         {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
           <div
             key={day}
-            className="text-center text-xs md:text-sm font-medium text-gray-500 py-1 md:py-2"
+            className="text-center text-xs md:text-sm font-medium text-gray-500 py-1 md:py-2 dark:text-gray-400"
           >
             {day}
           </div>
@@ -168,18 +168,18 @@ export function MonthlyCalendar({
           return (
             <div
               key={`${displayYear}-${displayMonth}-${dayNumber}`}
-              className={`aspect-square p-1 md:p-2 rounded-lg border transition-colors text-xs md:text-sm ${isToday ? 'bg-indigo-600 text-white border-indigo-600 font-bold' : isCurrentWeek ? 'bg-indigo-200 border-indigo-400 font-semibold' : isWeekend && person ? 'bg-gray-50 border-gray-200' : 'border-gray-100'}`}
+              className={`aspect-square p-1 md:p-2 rounded-lg border transition-colors text-xs md:text-sm ${isToday ? 'bg-indigo-600 text-white border-indigo-600 font-bold' : isCurrentWeek ? 'bg-indigo-200 border-indigo-400 font-semibold dark:bg-indigo-900/60 dark:border-indigo-700' : isWeekend && person ? 'bg-gray-50 border-gray-200 dark:bg-gray-700/40 dark:border-gray-700' : 'border-gray-100 dark:border-gray-700'}`}
             >
               <div className="flex flex-col h-full">
                 <span
-                  className={`text-xs md:text-sm font-medium ${isToday ? 'text-white' : 'text-gray-700'}`}
+                  className={`text-xs md:text-sm font-medium ${isToday ? 'text-white' : 'text-gray-700 dark:text-gray-300'}`}
                 >
                   {dayNumber}
                 </span>
                 {isWeekend && person && (
                   <div className="mt-auto">
                     <div
-                      className={`text-xs md:text-xs break-words line-clamp-2 ${isToday ? 'text-white' : 'text-indigo-600'}`}
+                      className={`text-xs md:text-xs break-words line-clamp-2 ${isToday ? 'text-white' : 'text-indigo-600 dark:text-indigo-400'}`}
                       title={person}
                     >
                       {person}
@@ -191,13 +191,13 @@ export function MonthlyCalendar({
           )
         })}
       </div>
-      <div className="mt-3 md:mt-4 flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 text-xs md:text-sm text-gray-600">
+      <div className="mt-3 md:mt-4 flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 text-xs md:text-sm text-gray-600 dark:text-gray-400">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 md:w-4 md:h-4 bg-indigo-600 rounded"></div>
           <span>Today</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 md:w-4 md:h-4 bg-indigo-200 border border-indigo-400 rounded"></div>
+          <div className="w-3 h-3 md:w-4 md:h-4 bg-indigo-200 border border-indigo-400 rounded dark:bg-indigo-900/60 dark:border-indigo-700"></div>
           <span>Current Week</span>
         </div>
       </div>

@@ -77,3 +77,44 @@ Core Features & Enhancements
         Fair Balancing: Ensure no one gets weekend clusters (multiple consecutive weeks)
         Preference Engine: Allow people to mark preferred/disliked dates
         Capacity Planning: Consider who's available/unavailable
+
+
+        What's missing (by roadmap category)
+
+┌─────┬───────────────────────────────────────────────────────┬───────────────────────────────┐
+│  #  │                       Category                        │            Status             │
+├─────┼───────────────────────────────────────────────────────┼───────────────────────────────┤
+│ 2   │ Swaps, skip/excuse, exclusions, weights,              │ ❌ UI stubs only, no backend  │
+│     │ bi-weekly/monthly, multi-day                          │                               │
+├─────┼───────────────────────────────────────────────────────┼───────────────────────────────┤
+│ 3   │ Reminders, in-app notifications, Slack/Discord        │ ❌ (email infra exists, no    │
+│     │                                                       │ reminders)                    │
+├─────┼───────────────────────────────────────────────────────┼───────────────────────────────┤
+│ 4   │ Tasks, checklists, photo verification                 │ ❌ no entity                  │
+├─────┼───────────────────────────────────────────────────────┼───────────────────────────────┤
+│ 5   │ Completion tracking, ratings, leaderboard, penalties, │ ❌                            │
+│     │  reports                                              │                               │
+├─────┼───────────────────────────────────────────────────────┼───────────────────────────────┤
+│ 6   │ Points, streaks, badges, team chat                    │ ❌                            │
+├─────┼───────────────────────────────────────────────────────┼───────────────────────────────┤
+│ 7   │ Expense/bill splitting, fines                         │ ❌                            │
+├─────┼───────────────────────────────────────────────────────┼───────────────────────────────┤
+│ 8   │ Native mobile app, offline, push                      │ ❌                            │
+├─────┼───────────────────────────────────────────────────────┼───────────────────────────────┤
+│ 9   │ Analytics dashboards, heatmaps, per-person stats,     │ ❌                            │
+│     │ PDF/CSV export                                        │                               │
+├─────┼───────────────────────────────────────────────────────┼───────────────────────────────┤
+│ 10  │ Themes, custom holidays, seasonal, import/export      │ ❌ (only household name       │
+│     │                                                       │ exists)                       │
+├─────┼───────────────────────────────────────────────────────┼───────────────────────────────┤
+│ 11  │ CSV bulk import, templates, audit logs, retention     │ ❌                            │
+├─────┼───────────────────────────────────────────────────────┼───────────────────────────────┤
+│ 12  │ Google Calendar / iCal / webhooks / public API        │ ❌                            │
+├─────┼───────────────────────────────────────────────────────┼───────────────────────────────┤
+│ 13  │ Dark mode, i18n, WCAG accessibility                   │ ❌ (responsive only)          │
+├─────┼───────────────────────────────────────────────────────┼───────────────────────────────┤
+│ 14  │ Disputes, voting, comments/notes, schedule history    │ ❌                            │
+├─────┼───────────────────────────────────────────────────────┼───────────────────────────────┤
+│ 15  │ ML optimization, fair balancing, preference engine,   │ ❌                            │
+│     │ capacity                                              │                               │
+└─────┴───────────────────────────────────────────────────────┴───────────────────────────────┘

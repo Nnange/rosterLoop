@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "./context/AuthContext";
+import { ThemeProvider } from "./components/ThemeProvider";
 import { SimpleCookieConsentBanner } from "./components/SimpleCookieConsentBanner";
 import { TokenExpirationMonitor } from "./components/TokenExpirationMonitor";
 
@@ -15,13 +16,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`antialiased`}>
-        <AuthProvider>
-          <TokenExpirationMonitor />
-          <SimpleCookieConsentBanner />
-          {children}
-        </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <TokenExpirationMonitor />
+            <SimpleCookieConsentBanner />
+            {children}
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

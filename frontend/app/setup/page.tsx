@@ -77,25 +77,26 @@ export default function SetupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
       <Header />
-      
+
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-900">
+        <h1 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-gray-100">
           Create New Household
         </h1>
         {error && (
-          <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex justify-between items-center">
+          <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex justify-between items-center dark:bg-red-950/40 dark:border-red-800 dark:text-red-300">
             <span>{error}</span>
             <button
               onClick={() => setError('')}
-              className="text-red-700 hover:text-red-900 font-bold text-lg"
+              className="text-red-700 hover:text-red-900 font-bold text-lg dark:text-red-300 dark:hover:text-red-100"
+              aria-label="Dismiss error"
             >
               ×
             </button>
           </div>
         )}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800 dark:shadow-black/30">
           <SetupForm onComplete={handleSetupComplete} onBack={() => router.push('/households')} />
         </div>
       </div>

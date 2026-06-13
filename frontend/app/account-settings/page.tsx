@@ -176,10 +176,10 @@ export default function AccountSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center dark:from-gray-900 dark:to-gray-950">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4 dark:border-indigo-400"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
         </div>
       </div>
     )
@@ -190,29 +190,29 @@ export default function AccountSettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
       <Header />
 
       <main className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Account Settings</h1>
+        <div className="bg-white rounded-lg shadow-md p-8 dark:bg-gray-800 dark:shadow-black/30">
+          <h1 className="text-3xl font-bold text-gray-900 mb-8 dark:text-gray-100">Account Settings</h1>
 
           <div className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Account Information</h2>
-            <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4 dark:text-gray-100">Account Information</h2>
+            <div className="bg-gray-50 rounded-lg p-4 space-y-3 dark:bg-gray-700/40">
               <div>
-                <p className="text-sm text-gray-600">Email</p>
-                <p className="font-medium text-gray-900">{user.email}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Email</p>
+                <p className="font-medium text-gray-900 dark:text-gray-100">{user.email}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Name</p>
-                <p className="font-medium text-gray-900">
+                <p className="text-sm text-gray-600 dark:text-gray-400">Name</p>
+                <p className="font-medium text-gray-900 dark:text-gray-100">
                   {user.firstName} {user.lastName}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Role</p>
-                <p className="font-medium text-gray-900">
+                <p className="text-sm text-gray-600 dark:text-gray-400">Role</p>
+                <p className="font-medium text-gray-900 dark:text-gray-100">
                   {user.role === 'ROLE_ADMIN' ? 'Administrator' : 'Member'}
                 </p>
               </div>
@@ -220,17 +220,17 @@ export default function AccountSettingsPage() {
           </div>
 
           {(error || success) && (
-            <div className={`mb-6 p-3 rounded ${success ? 'bg-green-100 border border-green-400 text-green-700' : 'bg-red-100 border border-red-400 text-red-700'}`}>
+            <div className={`mb-6 p-3 rounded ${success ? 'bg-green-100 border border-green-400 text-green-700 dark:bg-green-950/40 dark:border-green-800 dark:text-green-300' : 'bg-red-100 border border-red-400 text-red-700 dark:bg-red-950/40 dark:border-red-800 dark:text-red-300'}`}>
               {error || success}
             </div>
           )}
 
-          <div className="mb-8 border-t pt-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Edit Profile</h2>
+          <div className="mb-8 border-t border-gray-200 pt-8 dark:border-gray-700">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4 dark:text-gray-100">Edit Profile</h2>
             {editingProfile ? (
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                     First Name
                   </label>
                   <input
@@ -238,12 +238,12 @@ export default function AccountSettingsPage() {
                     type="text"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
                     disabled={isUpdatingProfile}
                   />
                 </div>
                 <div>
-                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                     Last Name
                   </label>
                   <input
@@ -251,7 +251,7 @@ export default function AccountSettingsPage() {
                     type="text"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
                     disabled={isUpdatingProfile}
                   />
                 </div>
@@ -271,7 +271,7 @@ export default function AccountSettingsPage() {
                       setError('')
                     }}
                     disabled={isUpdatingProfile}
-                    className="px-4 py-2 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 disabled:opacity-50 transition-colors font-medium"
+                    className="px-4 py-2 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 disabled:opacity-50 transition-colors font-medium dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
                   >
                     Cancel
                   </button>
@@ -287,12 +287,12 @@ export default function AccountSettingsPage() {
             )}
           </div>
 
-          <div className="mb-8 border-t pt-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Password</h2>
+          <div className="mb-8 border-t border-gray-200 pt-8 dark:border-gray-700">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4 dark:text-gray-100">Password</h2>
             {showChangePassword ? (
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                     Current Password
                   </label>
                   <input
@@ -300,13 +300,13 @@ export default function AccountSettingsPage() {
                     type="password"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
                     placeholder="••••••••"
                     disabled={isChangingPassword}
                   />
                 </div>
                 <div>
-                  <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                     New Password
                   </label>
                   <input
@@ -314,13 +314,13 @@ export default function AccountSettingsPage() {
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
                     placeholder="••••••••"
                     disabled={isChangingPassword}
                   />
                 </div>
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                     Confirm New Password
                   </label>
                   <input
@@ -328,12 +328,12 @@ export default function AccountSettingsPage() {
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
                     placeholder="••••••••"
                     disabled={isChangingPassword}
                   />
                 </div>
-                <p className="text-sm text-gray-600">Password must be at least 8 characters long.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Password must be at least 8 characters long.</p>
                 <div className="flex gap-3">
                   <button
                     onClick={handleChangePassword}
@@ -351,7 +351,7 @@ export default function AccountSettingsPage() {
                       setError('')
                     }}
                     disabled={isChangingPassword}
-                    className="px-4 py-2 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 disabled:opacity-50 transition-colors font-medium"
+                    className="px-4 py-2 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 disabled:opacity-50 transition-colors font-medium dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
                   >
                     Cancel
                   </button>
@@ -367,29 +367,29 @@ export default function AccountSettingsPage() {
             )}
           </div>
 
-          <div className="border-t pt-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4 text-red-600">
+          <div className="border-t border-gray-200 pt-8 dark:border-gray-700">
+            <h2 className="text-xl font-semibold mb-4 text-red-600 dark:text-red-400">
               Danger Zone
             </h2>
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-              <p className="text-sm text-gray-600 mb-4">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 dark:bg-red-950/30 dark:border-red-900">
+              <p className="text-sm text-gray-600 mb-4 dark:text-gray-300">
                 Deleting your account is permanent and cannot be undone. This will:
               </p>
-              <ul className="list-disc list-inside text-sm text-gray-600 space-y-1 mb-4">
+              <ul className="list-disc list-inside text-sm text-gray-600 space-y-1 mb-4 dark:text-gray-300">
                 <li>Remove your account and all associated data</li>
                 <li>Remove you from all households</li>
                 <li>Cancel any pending invitations</li>
               </ul>
 
               {error && (
-                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded dark:bg-red-950/40 dark:border-red-800 dark:text-red-300">
                   {error}
                 </div>
               )}
 
               {showDeleteConfirm ? (
                 <div className="space-y-3">
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     Are you absolutely sure? This action cannot be undone.
                   </p>
                   <div className="flex gap-3">
@@ -403,7 +403,7 @@ export default function AccountSettingsPage() {
                     <button
                       onClick={() => setShowDeleteConfirm(false)}
                       disabled={isDeleting}
-                      className="px-4 py-2 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                      className="px-4 py-2 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
                     >
                       Cancel
                     </button>

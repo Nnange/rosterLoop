@@ -72,18 +72,18 @@ export default function SignupForm() {
   }
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-md w-96 mb-10">
+    <div className="bg-white p-8 rounded-lg shadow-md w-96 mb-10 dark:bg-gray-800 dark:shadow-black/30">
       <h1 className="text-2xl font-bold mb-6 text-center">Create Account</h1>
 
       {(formError || error) && (
-        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded dark:bg-red-950/40 dark:border-red-800 dark:text-red-300">
           {formError || error}
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
             First Name
           </label>
           <input
@@ -92,14 +92,14 @@ export default function SignupForm() {
             name="firstName"
             value={formData.firstName}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
             placeholder="John"
             disabled={loading}
           />
         </div>
 
         <div className="mb-4">
-          <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
             Last Name
           </label>
           <input
@@ -108,14 +108,14 @@ export default function SignupForm() {
             name="lastName"
             value={formData.lastName}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
             placeholder="Doe"
             disabled={loading}
           />
         </div>
 
         <div className="mb-4">
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
             Email
           </label>
           <input
@@ -124,14 +124,14 @@ export default function SignupForm() {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
             placeholder="your@email.com"
             disabled={loading}
           />
         </div>
 
         <div className="mb-4">
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
             Password
           </label>
           <input
@@ -140,14 +140,14 @@ export default function SignupForm() {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
             placeholder="••••••••"
             disabled={loading}
           />
         </div>
 
         <div className="mb-6">
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
             Confirm Password
           </label>
           <input
@@ -156,7 +156,7 @@ export default function SignupForm() {
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
             placeholder="••••••••"
             disabled={loading}
           />
@@ -171,9 +171,9 @@ export default function SignupForm() {
         </button>
       </form>
 
-      <p className="text-center text-gray-600 mt-4">
+      <p className="text-center text-gray-600 mt-4 dark:text-gray-400">
         Already have an account?{' '}
-        <a href={getLoginLink()} className="text-indigo-600 hover:underline font-semibold">
+        <a href={getLoginLink()} className="text-indigo-600 hover:underline font-semibold dark:text-indigo-400">
           Log in
         </a>
       </p>

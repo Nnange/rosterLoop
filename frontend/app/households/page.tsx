@@ -187,10 +187,10 @@ export default function HouseholdsPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center dark:from-gray-900 dark:to-gray-950">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading households...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4 dark:border-indigo-400"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading households...</p>
         </div>
       </div>
     );
@@ -201,21 +201,22 @@ export default function HouseholdsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
       <Header />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">
+        <h1 className="text-4xl font-bold text-gray-900 mb-8 dark:text-gray-100">
           {isAdmin(user?.role) ? 'My Households' : 'Households'}
         </h1>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex justify-between items-center">
+          <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex justify-between items-center dark:bg-red-950/40 dark:border-red-800 dark:text-red-300">
             <span>{error}</span>
             <button
               onClick={() => setError('')}
-              className="text-red-700 hover:text-red-900 font-bold text-lg"
+              className="text-red-700 hover:text-red-900 font-bold text-lg dark:text-red-300 dark:hover:text-red-100"
+              aria-label="Dismiss error"
             >
               ×
             </button>
@@ -223,11 +224,12 @@ export default function HouseholdsPage() {
         )}
 
         {success && (
-          <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg flex justify-between items-center">
+          <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg flex justify-between items-center dark:bg-green-950/40 dark:border-green-800 dark:text-green-300">
             <span>{success}</span>
             <button
               onClick={() => setSuccess('')}
-              className="text-green-700 hover:text-green-900 font-bold text-lg"
+              className="text-green-700 hover:text-green-900 font-bold text-lg dark:text-green-300 dark:hover:text-green-100"
+              aria-label="Dismiss message"
             >
               ×
             </button>
@@ -235,13 +237,13 @@ export default function HouseholdsPage() {
         )}
 
         {households.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-8 text-center">
+          <div className="bg-white rounded-lg shadow-md p-8 text-center dark:bg-gray-800 dark:shadow-black/30">
             {isAdmin(user?.role) ? (
               <>
-                <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-2 dark:text-gray-100">
                   No Households Yet
                 </h2>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 mb-6 dark:text-gray-400">
                   You don't have any households set up. Create one to get started!
                 </p>
                 <Link
@@ -253,10 +255,10 @@ export default function HouseholdsPage() {
               </>
             ) : (
               <>
-                <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-2 dark:text-gray-100">
                   No Households
                 </h2>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-400">
                   You haven't been invited to any households yet. Ask a household admin to invite you!
                 </p>
               </>
@@ -268,24 +270,24 @@ export default function HouseholdsPage() {
               {households.map((household) => (
                 <div
                   key={household.id}
-                  className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-200"
+                  className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:shadow-black/30"
                 >
                   <div className="p-5">
-                    <h3 className="text-base font-semibold text-gray-900 mb-1">
+                    <h3 className="text-base font-semibold text-gray-900 mb-1 dark:text-gray-100">
                       {household.householdName}
                     </h3>
-                    <p className="text-gray-500 text-xs mb-3">
+                    <p className="text-gray-500 text-xs mb-3 dark:text-gray-400">
                       {new Date(household.createdAt).toLocaleDateString()}
                     </p>
-                    
+
                     {household.flatmateNames && household.flatmateNames.length > 0 && (
-                      <div className="mb-4 pb-3 border-b border-gray-200">
-                        <p className="text-xs text-gray-600 font-medium mb-1">Flatmates:</p>
+                      <div className="mb-4 pb-3 border-b border-gray-200 dark:border-gray-700">
+                        <p className="text-xs text-gray-600 font-medium mb-1 dark:text-gray-400">Flatmates:</p>
                         <div className="flex flex-wrap gap-1">
                           {household.flatmateNames.map((name) => (
                             <span
                               key={name}
-                              className="inline-block px-2 py-1 bg-indigo-100 text-indigo-700 text-xs rounded"
+                              className="inline-block px-2 py-1 bg-indigo-100 text-indigo-700 text-xs rounded dark:bg-indigo-900/50 dark:text-indigo-300"
                             >
                               {name}
                             </span>
@@ -321,13 +323,13 @@ export default function HouseholdsPage() {
                           </button>
                           <Link
                             href={`/households/${household.id}/edit`}
-                            className="px-3 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                            className="px-3 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                           >
                             Edit
                           </Link>
                           <button
                             onClick={() => openDeleteModal(household)}
-                            className="px-3 py-2 bg-gray-100 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors"
+                            className="px-3 py-2 bg-gray-100 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors dark:bg-gray-700 dark:text-red-400 dark:hover:bg-red-950/40"
                           >
                             Delete
                           </button>
@@ -346,11 +348,11 @@ export default function HouseholdsPage() {
             </div>
 
             {isAdmin(user?.role) && (
-              <div className="bg-white rounded-lg shadow-md p-8 text-center">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+              <div className="bg-white rounded-lg shadow-md p-8 text-center dark:bg-gray-800 dark:shadow-black/30">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-2 dark:text-gray-100">
                   Add Another Household?
                 </h2>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 mb-6 dark:text-gray-400">
                   Create an additional household to manage another cleaning
                   schedule
                 </p>
