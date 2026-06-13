@@ -69,27 +69,27 @@ export default function InvitationAcceptClient() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center dark:from-gray-900 dark:to-gray-950">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">{loading ? 'Processing invitation...' : 'Loading...'}</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4 dark:border-indigo-400"></div>
+          <p className="text-gray-600 dark:text-gray-400">{loading ? 'Processing invitation...' : 'Loading...'}</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
       <Header />
 
       <main className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center dark:bg-gray-800 dark:shadow-black/30">
           {status === 'success' && (
             <>
               <div className="mb-4">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto dark:bg-green-900/50">
                   <svg
-                    className="w-8 h-8 text-green-600"
+                    className="w-8 h-8 text-green-600 dark:text-green-400"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -101,18 +101,18 @@ export default function InvitationAcceptClient() {
                   </svg>
                 </div>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Success!</h1>
-              <p className="text-gray-600 mb-6">{message}</p>
-              <p className="text-sm text-gray-500">Redirecting to households...</p>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2 dark:text-gray-100">Success!</h1>
+              <p className="text-gray-600 mb-6 dark:text-gray-400">{message}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Redirecting to households...</p>
             </>
           )}
 
           {status === 'error' && (
             <>
               <div className="mb-4">
-                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto dark:bg-red-900/50">
                   <svg
-                    className="w-8 h-8 text-red-600"
+                    className="w-8 h-8 text-red-600 dark:text-red-400"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -124,8 +124,8 @@ export default function InvitationAcceptClient() {
                   </svg>
                 </div>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Oops!</h1>
-              <p className="text-gray-600 mb-6">{message}</p>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2 dark:text-gray-100">Oops!</h1>
+              <p className="text-gray-600 mb-6 dark:text-gray-400">{message}</p>
               <button
                 onClick={() => router.push('/households')}
                 className="inline-block px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"

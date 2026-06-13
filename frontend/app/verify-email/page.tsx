@@ -89,33 +89,33 @@ function VerifyEmailContent() {
   }, [email, router])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col dark:from-gray-900 dark:to-gray-950">
       <Header />
       
       <main className="flex-1 flex items-center justify-center px-4">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full dark:bg-gray-800 dark:shadow-black/30">
           {status === 'loading' && (
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Verifying Email</h1>
-              <p className="text-gray-600">Please wait while we verify your email address...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4 dark:border-indigo-400"></div>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2 dark:text-gray-100">Verifying Email</h1>
+              <p className="text-gray-600 dark:text-gray-400">Please wait while we verify your email address...</p>
             </div>
           )}
 
           {status === 'success' && (
             <div className="text-center">
               <div className="mb-4 flex justify-center">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center dark:bg-green-900/50">
+                  <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Email Verified!</h1>
-              <p className="text-gray-600 mb-4">
+              <h1 className="text-2xl font-bold text-gray-900 mb-2 dark:text-gray-100">Email Verified!</h1>
+              <p className="text-gray-600 mb-4 dark:text-gray-400">
                 Your email {email} has been successfully verified.
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
                 Redirecting you to login page in a few seconds...
               </p>
             </div>
@@ -124,14 +124,14 @@ function VerifyEmailContent() {
           {status === 'error' && (
             <div className="text-center">
               <div className="mb-4 flex justify-center">
-                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center dark:bg-red-900/50">
+                  <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </div>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Verification Failed</h1>
-              <p className="text-gray-600 mb-4">{message}</p>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2 dark:text-gray-100">Verification Failed</h1>
+              <p className="text-gray-600 mb-4 dark:text-gray-400">{message}</p>
               <button
                 onClick={() => router.push('/login')}
                 className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
@@ -148,14 +148,14 @@ function VerifyEmailContent() {
 
 function VerifyEmailLoadingFallback() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col dark:from-gray-900 dark:to-gray-950">
       <Header />
       <main className="flex-1 flex items-center justify-center px-4">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full dark:bg-gray-800 dark:shadow-black/30">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Loading</h1>
-            <p className="text-gray-600">Preparing verification...</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2 dark:text-gray-100">Loading</h1>
+            <p className="text-gray-600 dark:text-gray-400">Preparing verification...</p>
           </div>
         </div>
       </main>

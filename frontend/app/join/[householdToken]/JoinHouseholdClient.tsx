@@ -149,10 +149,10 @@ export default function JoinHouseholdClient() {
   // Loading state
   if (pageState === 'loading' || authLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center dark:from-gray-900 dark:to-gray-950">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Verifying join link...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4 dark:border-indigo-400"></div>
+          <p className="text-gray-600 dark:text-gray-400">Verifying join link...</p>
         </div>
       </div>
     )
@@ -161,10 +161,10 @@ export default function JoinHouseholdClient() {
   // Processing state - joining household
   if (pageState === 'processing') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center dark:from-gray-900 dark:to-gray-950">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Adding you to the household...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4 dark:border-indigo-400"></div>
+          <p className="text-gray-600 dark:text-gray-400">Adding you to the household...</p>
         </div>
       </div>
     )
@@ -173,14 +173,14 @@ export default function JoinHouseholdClient() {
   // Success state
   if (pageState === 'success') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
         <Header />
         <main className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
-          <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+          <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center dark:bg-gray-800 dark:shadow-black/30">
             <div className="mb-4">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto dark:bg-green-900/50">
                 <svg
-                  className="w-8 h-8 text-green-600"
+                  className="w-8 h-8 text-green-600 dark:text-green-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -192,11 +192,11 @@ export default function JoinHouseholdClient() {
                 </svg>
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome!</h2>
-            <p className="text-gray-600 mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2 dark:text-gray-100">Welcome!</h2>
+            <p className="text-gray-600 mb-4 dark:text-gray-400">
               You've been added to <strong>{householdInfo?.name}</strong>
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Redirecting you to the household...
             </p>
           </div>
@@ -208,14 +208,14 @@ export default function JoinHouseholdClient() {
   // Already a member state
   if (pageState === 'already-member') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
         <Header />
         <main className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
-          <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+          <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center dark:bg-gray-800 dark:shadow-black/30">
             <div className="mb-4">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto dark:bg-blue-900/50">
                 <svg
-                  className="w-8 h-8 text-blue-600"
+                  className="w-8 h-8 text-blue-600 dark:text-blue-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -227,11 +227,11 @@ export default function JoinHouseholdClient() {
                 </svg>
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Already a Member!</h2>
-            <p className="text-gray-600 mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2 dark:text-gray-100">Already a Member!</h2>
+            <p className="text-gray-600 mb-4 dark:text-gray-400">
               You're already a member of <strong>{householdInfo?.name}</strong>
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Redirecting you to your households...
             </p>
           </div>
@@ -243,14 +243,14 @@ export default function JoinHouseholdClient() {
   // Error state
   if (pageState === 'error') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
         <Header />
         <main className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
-          <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
+          <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center dark:bg-gray-800 dark:shadow-black/30">
             <div className="mb-4">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto dark:bg-red-900/50">
                 <svg
-                  className="w-8 h-8 text-red-600"
+                  className="w-8 h-8 text-red-600 dark:text-red-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -262,8 +262,8 @@ export default function JoinHouseholdClient() {
                 </svg>
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Something went wrong</h2>
-            <p className="text-gray-600 mb-6">{error}</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2 dark:text-gray-100">Something went wrong</h2>
+            <p className="text-gray-600 mb-6 dark:text-gray-400">{error}</p>
             <button
               onClick={() => router.push('/')}
               className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
@@ -283,24 +283,24 @@ export default function JoinHouseholdClient() {
     const isFull = householdInfo && householdInfo.memberCount >= householdInfo.maxMembers
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
         <Header />
         <main className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
           <div className="w-full max-w-md">
             {/* Household Info Card */}
             {householdInfo && (
-              <div className="bg-white rounded-lg shadow-md p-6 mb-6 text-center">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <div className="bg-white rounded-lg shadow-md p-6 mb-6 text-center dark:bg-gray-800 dark:shadow-black/30">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2 dark:text-gray-100">
                   Join {householdInfo.name}
                 </h2>
-                <p className="text-gray-600 mb-3">
+                <p className="text-gray-600 mb-3 dark:text-gray-400">
                   Invited by {householdInfo.ownerName}
                 </p>
-                <p className="text-sm text-gray-700 font-medium mb-1">
+                <p className="text-sm text-gray-700 font-medium mb-1 dark:text-gray-300">
                   Members: {householdInfo.memberCount} / {householdInfo.maxMembers}
                 </p>
                 {isFull && (
-                  <p className="text-sm text-red-600 font-medium bg-red-50 p-2 rounded mt-2">
+                  <p className="text-sm text-red-600 font-medium bg-red-50 p-2 rounded mt-2 dark:text-red-400 dark:bg-red-950/40">
                     This household is at capacity and cannot accept new members.
                   </p>
                 )}
@@ -309,11 +309,11 @@ export default function JoinHouseholdClient() {
 
             {/* Auth Redirect Card - Only show if not full */}
             {!isFull && (
-              <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">
+              <div className="bg-white rounded-lg shadow-lg p-8 text-center dark:bg-gray-800 dark:shadow-black/30">
+                <h3 className="text-xl font-bold text-gray-900 mb-4 dark:text-gray-100">
                   {isNewUser ? 'Create Account to Join' : 'Log In to Join'}
                 </h3>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 mb-6 dark:text-gray-400">
                   {isNewUser
                     ? 'Create an account to join this household'
                     : 'Log in with your account to join this household'}
@@ -327,7 +327,7 @@ export default function JoinHouseholdClient() {
                   </a>
                   <a
                     href={`/login?redirect=${encodeURIComponent(returnUrl)}`}
-                    className="block w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition font-medium"
+                    className="block w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition font-medium dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                   >
                     Log In
                   </a>
@@ -337,11 +337,11 @@ export default function JoinHouseholdClient() {
 
             {/* Full Household - Cannot Join */}
             {isFull && (
-              <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+              <div className="bg-white rounded-lg shadow-lg p-8 text-center dark:bg-gray-800 dark:shadow-black/30">
                 <div className="mb-4">
-                  <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto">
+                  <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto dark:bg-yellow-900/50">
                     <svg
-                      className="w-8 h-8 text-yellow-600"
+                      className="w-8 h-8 text-yellow-600 dark:text-yellow-400"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -353,10 +353,10 @@ export default function JoinHouseholdClient() {
                     </svg>
                   </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                <h3 className="text-xl font-bold text-gray-900 mb-2 dark:text-gray-100">
                   Household Full
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-400">
                   Unfortunately, this household has reached its maximum capacity and cannot accept new members.
                 </p>
               </div>

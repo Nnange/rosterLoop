@@ -120,10 +120,10 @@ export default function EditHouseholdClient() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center dark:from-gray-900 dark:to-gray-950">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4 dark:border-indigo-400"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
         </div>
       </div>
     )
@@ -134,28 +134,29 @@ export default function EditHouseholdClient() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
       <Header />
 
       <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="mb-6">
           <button
             onClick={() => router.push('/households')}
-            className="px-4 py-2 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2 dark:bg-gray-700 dark:hover:bg-gray-600"
           >
             <span>←</span> Back
           </button>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Edit Household</h1>
+        <div className="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800 dark:shadow-black/30">
+          <h1 className="text-3xl font-bold text-gray-900 mb-6 dark:text-gray-100">Edit Household</h1>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex justify-between items-center">
+            <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex justify-between items-center dark:bg-red-950/40 dark:border-red-800 dark:text-red-300">
               <span>{error}</span>
               <button
                 onClick={() => setError('')}
-                className="text-red-700 hover:text-red-900 font-bold text-lg"
+                className="text-red-700 hover:text-red-900 font-bold text-lg dark:text-red-300 dark:hover:text-red-100"
+                aria-label="Dismiss error"
               >
                 ×
               </button>
@@ -165,7 +166,7 @@ export default function EditHouseholdClient() {
           {household && (
             <form onSubmit={handleSave} className="space-y-4">
               <div>
-                <label htmlFor="householdName" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="householdName" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                   Household Name
                 </label>
                 <input
@@ -173,12 +174,12 @@ export default function EditHouseholdClient() {
                   type="text"
                   value={householdName}
                   onChange={(e) => setHouseholdName(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
                 />
               </div>
 
               <div>
-                <label htmlFor={`flatmateName`} className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor={`flatmateName`} className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                   Flatmates
                 </label>
                 <div className="space-y-2">
@@ -193,7 +194,7 @@ export default function EditHouseholdClient() {
                           newNames[index] = e.target.value
                           setFlatmateNames(newNames)
                         }}
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
                         placeholder="Flatmate name"
                       />
                       <button
@@ -202,7 +203,7 @@ export default function EditHouseholdClient() {
                           const newNames = flatmateNames.filter((_, i) => i !== index)
                           setFlatmateNames(newNames)
                         }}
-                        className="px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+                        className="px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors dark:bg-red-950/40 dark:text-red-400 dark:hover:bg-red-900/40"
                       >
                         Remove
                       </button>
@@ -212,7 +213,7 @@ export default function EditHouseholdClient() {
                 <button
                   type="button"
                   onClick={() => setFlatmateNames([...flatmateNames, ''])}
-                  className="mt-3 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
+                  className="mt-3 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                 >
                   + Add Flatmate
                 </button>
@@ -222,7 +223,7 @@ export default function EditHouseholdClient() {
                 <button
                   type="button"
                   onClick={() => router.push('/households')}
-                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition-colors"
+                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                 >
                   Cancel
                 </button>

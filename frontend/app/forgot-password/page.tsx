@@ -50,17 +50,17 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center pt-8 bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="flex flex-col min-h-screen items-center justify-center pt-8 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
       <Header />
-      <div className="bg-white p-8 rounded-lg shadow-md w-96">
+      <div className="bg-white p-8 rounded-lg shadow-md w-96 dark:bg-gray-800 dark:shadow-black/30">
         <h1 className="text-2xl font-bold mb-6 text-center">Reset Password</h1>
 
         {success ? (
           <div className="text-center">
             <div className="mb-4">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto dark:bg-green-900/50">
                 <svg
-                  className="w-8 h-8 text-green-600"
+                  className="w-8 h-8 text-green-600 dark:text-green-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -72,11 +72,11 @@ export default function ForgotPasswordPage() {
                 </svg>
               </div>
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Check Your Email</h2>
-            <p className="text-gray-600 mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2 dark:text-gray-100">Check Your Email</h2>
+            <p className="text-gray-600 mb-6 dark:text-gray-400">
               We've sent a password reset link to <strong>{email}</strong>. Please check your email and click the link to reset your password.
             </p>
-            <p className="text-sm text-gray-500 mb-6">
+            <p className="text-sm text-gray-500 mb-6 dark:text-gray-400">
               The link will expire in 1 hour.
             </p>
             <button
@@ -89,13 +89,13 @@ export default function ForgotPasswordPage() {
         ) : (
           <form onSubmit={handleSubmit}>
             {error && (
-              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded dark:bg-red-950/40 dark:border-red-800 dark:text-red-300">
                 {error}
               </div>
             )}
 
             <div className="mb-6">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
                 Email Address
               </label>
               <input
@@ -103,13 +103,13 @@ export default function ForgotPasswordPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
                 placeholder="Enter your email"
                 disabled={loading}
               />
             </div>
 
-            <p className="text-sm text-gray-600 mb-6">
+            <p className="text-sm text-gray-600 mb-6 dark:text-gray-400">
               Enter your email address and we'll send you a link to reset your password.
             </p>
 
@@ -123,7 +123,7 @@ export default function ForgotPasswordPage() {
 
             <p className="text-center mt-4 text-sm">
               Remember your password?{' '}
-              <a href="/login" className="text-indigo-600 hover:text-indigo-700 font-medium">
+              <a href="/login" className="text-indigo-600 hover:text-indigo-700 font-medium dark:text-indigo-400 dark:hover:text-indigo-300">
                 Back to Login
               </a>
             </p>
