@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import ForgotPasswordPage from '../../forgot-password/page'
+import ForgotPasswordPage from '../../[locale]/forgot-password/page'
 
 vi.mock('next/navigation', () => ({
     useRouter: vi.fn(),

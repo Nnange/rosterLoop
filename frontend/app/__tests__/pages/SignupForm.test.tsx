@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import SignupForm from '../../signup/SignupForm'
+import SignupForm from '../../[locale]/signup/SignupForm'
 
 vi.mock('next/navigation', () => ({
     useRouter: vi.fn(),

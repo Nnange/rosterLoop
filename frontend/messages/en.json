@@ -1,0 +1,53 @@
+{
+  "Header": {
+    "title": "Flatemate Cleaning Roster",
+    "tagline": "Keep your shared space clean with a fair rotation system",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "Footer": {
+    "rights": "© {year} Flatemate Cleaning Roster. All rights reserved."
+  },
+  "Theme": {
+    "label": "Color theme",
+    "light": "Light theme",
+    "dark": "Dark theme",
+    "system": "System theme"
+  },
+  "LocaleSwitcher": {
+    "label": "Language",
+    "en": "English",
+    "de": "Deutsch"
+  },
+  "Login": {
+    "title": "Login",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "password": "Password",
+    "submit": "Login",
+    "submitting": "Logging in...",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "trouble": "Trouble signing in?",
+    "resetPassword": "Reset Your Password",
+    "errorRequired": "Email and password are required",
+    "errorFailed": "Login failed"
+  },
+  "Signup": {
+    "title": "Create Account",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "submit": "Sign Up",
+    "submitting": "Creating Account...",
+    "haveAccount": "Already have an account?",
+    "logIn": "Log in",
+    "errorAllRequired": "All fields are required",
+    "errorPasswordMatch": "Passwords do not match",
+    "errorPasswordLength": "Password must be at least 8 characters long",
+    "errorFailed": "Signup failed"
+  }
+}

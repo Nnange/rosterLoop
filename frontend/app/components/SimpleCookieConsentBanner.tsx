@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { Link } from '@/i18n/navigation'
 
 interface CookieConsent {
   essential: boolean
@@ -106,9 +107,9 @@ function CookieBanner({ onAcceptAll, onRejectAll, onSave }: Readonly<CookieBanne
               <p className="text-sm text-gray-600">
                 We use essential cookies for authentication. We also offer optional cookies for analytics 
                 to help us improve your experience. You can manage your preferences below or visit our{' '}
-                <a href="/privacy-policy" className="text-blue-600 hover:underline dark:text-blue-400">
+                <Link href="/privacy-policy" className="text-blue-600 hover:underline dark:text-blue-400">
                   Privacy Policy
-                </a>
+                </Link>
                 {'.'}
               </p>
             </div>
