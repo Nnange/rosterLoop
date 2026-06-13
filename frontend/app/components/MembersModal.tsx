@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useFocusTrap } from '@/app/hooks/useFocusTrap'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9092/rosterloop/api';
 
@@ -37,6 +38,7 @@ export default function MembersModal({
   const [removingId, setRemovingId] = useState<string | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editingName, setEditingName] = useState('')
+  const dialogRef = useFocusTrap<HTMLDivElement>(isOpen)
 
   useEffect(() => {
     if (isOpen && token) {
@@ -154,13 +156,13 @@ export default function MembersModal({
   }
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-    <div 
+    <div
       className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50"
       onClick={handleBackdropClick}
       onKeyDown={handleKeyDown}
     >
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="members-modal-title"

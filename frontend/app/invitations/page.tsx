@@ -143,7 +143,7 @@ export default function InvitationsPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
         <Header />
-        <main className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
+        <main id="main-content" className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
           <div className="w-full max-w-md">
             <div className="bg-white rounded-lg shadow-md p-6 mb-6 text-center dark:bg-gray-800 dark:shadow-black/30">
               <h2 className="text-2xl font-bold text-gray-900 mb-2 dark:text-gray-100">
@@ -186,7 +186,7 @@ export default function InvitationsPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
       <Header />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main id="main-content" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 className="text-3xl font-bold text-gray-900 mb-8 dark:text-gray-100">Household Invitations</h1>
 
         {error && (

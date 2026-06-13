@@ -175,7 +175,7 @@ export default function JoinHouseholdClient() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
         <Header />
-        <main className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
+        <main id="main-content" className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
           <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center dark:bg-gray-800 dark:shadow-black/30">
             <div className="mb-4">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto dark:bg-green-900/50">
@@ -210,7 +210,7 @@ export default function JoinHouseholdClient() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
         <Header />
-        <main className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
+        <main id="main-content" className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
           <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center dark:bg-gray-800 dark:shadow-black/30">
             <div className="mb-4">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto dark:bg-blue-900/50">
@@ -245,7 +245,7 @@ export default function JoinHouseholdClient() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
         <Header />
-        <main className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
+        <main id="main-content" className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
           <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center dark:bg-gray-800 dark:shadow-black/30">
             <div className="mb-4">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto dark:bg-red-900/50">
@@ -285,7 +285,7 @@ export default function JoinHouseholdClient() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
         <Header />
-        <main className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
+        <main id="main-content" className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
           <div className="w-full max-w-md">
             {/* Household Info Card */}
             {householdInfo && (

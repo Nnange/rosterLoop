@@ -1,5 +1,7 @@
 'use client'
 
+import { useFocusTrap } from '@/app/hooks/useFocusTrap'
+
 interface DeleteConfirmModalProps {
   isOpen: boolean
   householdName: string
@@ -15,6 +17,8 @@ export default function DeleteConfirmModal({
   onConfirm,
   onCancel,
 }: Readonly<DeleteConfirmModalProps>) {
+  const dialogRef = useFocusTrap<HTMLDivElement>(isOpen)
+
   if (!isOpen) return null
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -30,13 +34,13 @@ export default function DeleteConfirmModal({
   }
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
       className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50"
       onClick={handleBackdropClick}
       onKeyDown={handleKeyDown}
     >
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="delete-household-title"

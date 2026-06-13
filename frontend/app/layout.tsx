@@ -24,6 +24,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <a href="#main-content" className="skip-link">
+            Skip to main content
+          </a>
           <AuthProvider>
             <TokenExpirationMonitor />
             <SimpleCookieConsentBanner />

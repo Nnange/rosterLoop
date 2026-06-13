@@ -80,7 +80,7 @@ export default function SetupPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
       <Header />
 
-      <div className="max-w-2xl mx-auto px-4 py-8">
+      <div id="main-content" className="max-w-2xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-gray-100">
           Create New Household
         </h1>

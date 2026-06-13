@@ -40,7 +40,7 @@ export default function WaitingPage() {
   return (
     <>
       <Header />
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)] dark:from-gray-900 dark:to-gray-950">
+      <div id="main-content" className="bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)] dark:from-gray-900 dark:to-gray-950">
         <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center dark:bg-gray-800 dark:shadow-black/30">
         <div className="mb-6">
           <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4 dark:bg-indigo-900/50">

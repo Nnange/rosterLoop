@@ -82,7 +82,7 @@ export default function InvitationAcceptClient() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950">
       <Header />
 
-      <main className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
+      <main id="main-content" className="flex items-center justify-center px-4 py-12 min-h-[calc(100vh-80px)]">
         <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center dark:bg-gray-800 dark:shadow-black/30">
           {status === 'success' && (
             <>

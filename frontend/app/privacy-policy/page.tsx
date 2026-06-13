@@ -3,7 +3,7 @@
 export default function PrivacyPolicyPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 dark:bg-gray-950">
-      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-8 dark:bg-gray-800 dark:shadow-black/30">
+      <main id="main-content" className="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-8 dark:bg-gray-800 dark:shadow-black/30">
         <h1 className="text-4xl font-bold mb-8">Privacy Policy</h1>
         <p className="text-gray-600 mb-4 dark:text-gray-400">Last updated: April 4, 2026</p>
 
@@ -150,7 +150,7 @@ export default function PrivacyPolicyPage() {
             You can manage your cookie preferences by clicking the "🍪 Cookie Settings" button at the bottom of any page on our website.
           </p>
         </section>
-      </div>
+      </main>
     </div>
   )
 }

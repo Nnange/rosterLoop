@@ -92,7 +92,7 @@ function VerifyEmailContent() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col dark:from-gray-900 dark:to-gray-950">
       <Header />
       
-      <main className="flex-1 flex items-center justify-center px-4">
+      <main id="main-content" className="flex-1 flex items-center justify-center px-4">
         <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full dark:bg-gray-800 dark:shadow-black/30">
           {status === 'loading' && (
             <div className="text-center">
@@ -150,7 +150,7 @@ function VerifyEmailLoadingFallback() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col dark:from-gray-900 dark:to-gray-950">
       <Header />
-      <main className="flex-1 flex items-center justify-center px-4">
+      <main id="main-content" className="flex-1 flex items-center justify-center px-4">
         <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full dark:bg-gray-800 dark:shadow-black/30">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>

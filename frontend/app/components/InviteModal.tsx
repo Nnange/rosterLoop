@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useFocusTrap } from '@/app/hooks/useFocusTrap'
 
 interface InviteModalProps {
   readonly isOpen: boolean
@@ -19,6 +20,7 @@ export default function InviteModal({
 }: Readonly<InviteModalProps>) {
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
+  const dialogRef = useFocusTrap<HTMLDivElement>(isOpen)
 
   if (!isOpen) return null
 
@@ -61,13 +63,13 @@ export default function InviteModal({
   }
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
     <div
       className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50"
       onClick={handleBackdropClick}
       onKeyDown={handleKeyDown}
     >
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="invite-modal-title"
