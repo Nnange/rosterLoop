@@ -1,11 +1,13 @@
 "use client"
 
 import React, { useState } from 'react'
+import { useTranslations } from 'next-intl'
 interface SetupFormProps {
     onComplete: (names: string[]) => void
     onBack?: () => void
 }
 export function SetupForm({ onComplete, onBack }: Readonly<SetupFormProps>) {
+    const t = useTranslations('Setup')
     const [step, setStep] = useState(1)
     const [count, setCount] = useState<number>(2)
     const [names, setNames] = useState<string[]>([])
@@ -13,7 +15,7 @@ export function SetupForm({ onComplete, onBack }: Readonly<SetupFormProps>) {
     const handleCountSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         if (count < 1) {
-            setError('Please enter at least 1 person')
+            setError(t('errorAtLeastOne'))
             return
         }
         setNames(new Array(count).fill(''))
@@ -29,23 +31,23 @@ export function SetupForm({ onComplete, onBack }: Readonly<SetupFormProps>) {
         e.preventDefault()
         // Check if all names are filled
         if (names.some((name) => !name.trim())) {
-            setError('Please enter all names');
+            setError(t('errorAllNames'));
             return;
         }
         // Check for duplicate names
         const uniqueNames = new Set(names.map((n) => n.trim().toLowerCase()))
         if (uniqueNames.size !== names.length) {
-            setError('Each person must have a unique name')
+            setError(t('errorUniqueNames'))
             return;
         }
         onComplete(names);
     }
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md m-6 min-w-[70%]">
+        <div className="bg-white p-6 rounded-lg shadow-md m-6 min-w-[70%] dark:bg-gray-800 dark:shadow-black/30">
             {step === 1 && (
                 <div>
                     <h2 className="text-xl font-semibold mb-4 text-center">
-                        How many people live in your household?
+                        {t('howMany')}
                     </h2>
                     <form onSubmit={handleCountSubmit}>
                         <div className="mb-4">
@@ -54,10 +56,10 @@ export function SetupForm({ onComplete, onBack }: Readonly<SetupFormProps>) {
                                 min="1"
                                 value={count}
                                 onChange={(e) => setCount(Number.parseInt(e.target.value) || 0)}
-                                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
                             />
                         </div>
-                        {error && <p className="text-red-500 mb-4">{error}</p>}
+                        {error && <p className="text-red-500 mb-4 dark:text-red-400">{error}</p>}
                         <div className="flex gap-3">
                             {onBack && (
                                 <button
@@ -65,14 +67,14 @@ export function SetupForm({ onComplete, onBack }: Readonly<SetupFormProps>) {
                                     onClick={onBack}
                                     className="flex-1 bg-gray-600 text-white py-2 rounded hover:bg-gray-700 transition-colors flex items-center justify-center gap-2"
                                 >
-                                    <span>←</span> Back
+                                    <span>←</span> {t('back')}
                                 </button>
                             )}
                             <button
                                 type="submit"
                                 className={`${onBack ? 'flex-1' : 'w-full'} bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition-colors`}
                             >
-                                Next
+                                {t('next')}
                             </button>
                         </div>
                     </form>
@@ -80,36 +82,36 @@ export function SetupForm({ onComplete, onBack }: Readonly<SetupFormProps>) {
             )}
             {step === 2 && (
                 <div>
-                    <h2 className="text-xl font-semibold mb-4">Enter everyone's names</h2>
+                    <h2 className="text-xl font-semibold mb-4">{t('enterNames')}</h2>
                     <form onSubmit={handleNamesSubmit}>
                         {names.map((name, index) => (
                             <div key={index} className="mb-3">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Person {index + 1}
+                                <label className="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">
+                                    {t('person', { number: index + 1 })}
                                 </label>
                                 <input
                                     type="text"
                                     value={name}
                                     onChange={(e) => handleNameChange(index, e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                    placeholder="Enter name"
+                                    className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
+                                    placeholder={t('namePlaceholder')}
                                 />
                             </div>
                         ))}
-                        {error && <p className="text-red-500 mb-4">{error}</p>}
+                        {error && <p className="text-red-500 mb-4 dark:text-red-400">{error}</p>}
                         <div className="flex gap-3">
                             <button
                                 type="button"
                                 onClick={() => setStep(1)}
-                                className="flex-1 bg-gray-200 text-gray-800 py-2 rounded hover:bg-gray-300 transition-colors"
+                                className="flex-1 bg-gray-200 text-gray-800 py-2 rounded hover:bg-gray-300 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                             >
-                                Back
+                                {t('back')}
                             </button>
                             <button
                                 type="submit"
                                 className="flex-1 bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition-colors"
                             >
-                                Create Roster
+                                {t('createRoster')}
                             </button>
                         </div>
                     </form>

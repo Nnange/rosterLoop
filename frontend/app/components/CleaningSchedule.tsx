@@ -1,10 +1,11 @@
 "use client"
 
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import {
     generateYearlySchedule,
     formatWeekendRange,
-    getWeekNumber,
+    getWeekendSaturday,
 } from '../utils/scheduleGenerator';
 import { MonthlyCalendar } from './MonthlyCalendar';
 
@@ -12,6 +13,7 @@ interface CleaningScheduleProps {
     roommates: string[]
 }
 export function CleaningSchedule({ roommates }: Readonly<CleaningScheduleProps>) {
+    const t = useTranslations('Schedule')
     const [schedule, setSchedule] = useState<
         Array<{
             date: Date
@@ -27,10 +29,17 @@ export function CleaningSchedule({ roommates }: Readonly<CleaningScheduleProps>)
         const generatedSchedule = generateYearlySchedule(roommates)
         setSchedule(generatedSchedule)
         
-        // Find the current week by matching the current date's week number
+        // Find the current week by matching the exact Saturday date of the
+        // weekend we're in. Matching by ISO week number is ambiguous because
+        // week numbers repeat every year across the multi-year schedule, so it
+        // would pick a prior year's weekend (wrong person and date).
         if (generatedSchedule.length > 0) {
-            const currentWeekNum = getWeekNumber(new Date())
-            const currentItem = generatedSchedule.find(item => item.weekNumber === currentWeekNum)
+            const currentSaturday = getWeekendSaturday(new Date())
+            const currentItem = generatedSchedule.find((item) => {
+                const itemDate = new Date(item.date)
+                itemDate.setHours(0, 0, 0, 0)
+                return itemDate.getTime() === currentSaturday.getTime()
+            })
             if (currentItem) {
                 setCurrentWeekIndex(currentItem.weekIndex)
             }
@@ -49,67 +58,67 @@ export function CleaningSchedule({ roommates }: Readonly<CleaningScheduleProps>)
 
     return (
 
-        <div className='flex flex-col lg:px-6 lg:flex-row lg:space-x-6 lg:justify-center lg:items-start lg:w-full'>
+        <div className='flex flex-col px-2 lg:px-6 lg:flex-row lg:space-x-6 lg:justify-center lg:items-start lg:w-full'>
             <MonthlyCalendar schedule={schedule} currentWeekIndex={currentWeekIndex} />
 
-            <div className="bg-white rounded-lg shadow-md overflow-hidden lg:w-[50%] mb-6">
-                <div className="p-6 border-b">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                        Cleaning Schedule
+            <div className="bg-white rounded-lg shadow-md overflow-hidden lg:w-[50%] mb-6 dark:bg-gray-800 dark:shadow-black/30">
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-6 dark:text-gray-100">
+                        {t('title')}
                     </h2>
-                    <div className="bg-indigo-50 p-4 rounded-lg mb-6">
-                        <h3 className="text-lg font-medium text-indigo-800 mb-2">
-                            This Weekend
+                    <div className="bg-indigo-50 p-4 rounded-lg mb-6 dark:bg-indigo-950/40">
+                        <h3 className="text-lg font-medium text-indigo-800 mb-2 dark:text-indigo-300">
+                            {t('thisWeekend')}
                         </h3>
                         <div className="flex items-center">
-                            <div className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                            <div className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-lg dark:bg-indigo-500">
                                 {currentPersonOnDuty.charAt(0)}
                             </div>
                             <div className="ml-4">
                                 <p className="text-xl font-semibold">{currentPersonOnDuty}</p>
-                                <p className="text-gray-600">
+                                <p className="text-gray-600 dark:text-gray-400">
                                     {currentWeekendDate
                                         ? formatWeekendRange(currentWeekendDate)
-                                        : `Week ${currentWeekIndex}`}
+                                        : t('week', { number: currentWeekIndex })}
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                        <h3 className="text-lg font-medium text-gray-700 mb-2">
-                            Next Weekend
+                    <div className="bg-gray-50 p-4 rounded-lg dark:bg-gray-700/40">
+                        <h3 className="text-lg font-medium text-gray-700 mb-2 dark:text-gray-300">
+                            {t('nextWeekend')}
                         </h3>
                         <div className="flex items-center">
-                            <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-gray-700 font-bold">
+                            <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-gray-700 font-bold dark:bg-gray-600 dark:text-gray-100">
                                 {nextPersonOnDuty.charAt(0)}
                             </div>
                             <div className="ml-4">
                                 <p className="text-lg font-medium">{nextPersonOnDuty}</p>
-                                <p className="text-gray-500">Week {schedule.find((item) => item.weekIndex === currentWeekIndex + 1)?.weekNumber || 'N/A'}</p>
+                                <p className="text-gray-500 dark:text-gray-400">{t('week', { number: schedule.find((item) => item.weekIndex === currentWeekIndex + 1)?.weekNumber || 'N/A' })}</p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className="border-b px-6 py-3 bg-gray-50">
+                <div className="border-b px-6 py-3 bg-gray-50 border-gray-200 dark:border-gray-700 dark:bg-gray-700/40">
                     <div className="flex justify-between items-center">
-                        <h3 className="text-lg font-medium">Schedule</h3>
+                        <h3 className="text-lg font-medium">{t('schedule')}</h3>
                         <div className="flex space-x-2">
                             <button
                                 onClick={() => setViewMode('current')}
-                                className={`px-3 py-1 rounded text-sm ${viewMode === 'current' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                                className={`px-3 py-1 rounded text-sm ${viewMode === 'current' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500'}`}
                             >
-                                Next 4 Weeks
+                                {t('next4Weeks')}
                             </button>
                             <button
                                 onClick={() => setViewMode('all')}
-                                className={`px-3 py-1 rounded text-sm ${viewMode === 'all' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                                className={`px-3 py-1 rounded text-sm ${viewMode === 'all' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500'}`}
                             >
-                                Full Year
+                                {t('fullYear')}
                             </button>
                         </div>
                     </div>
                 </div>
-                <div className="divide-y max-h-96 overflow-y-auto">
+                <div className="divide-y divide-gray-200 max-h-96 overflow-y-auto dark:divide-gray-700">
                     {schedule
                         .filter((item) => {
                             if (viewMode === 'current') {
@@ -122,18 +131,18 @@ export function CleaningSchedule({ roommates }: Readonly<CleaningScheduleProps>)
                             return (
                                 <div
                                     key={index}
-                                    className={`flex justify-between items-center p-4 ${isCurrentWeek ? 'bg-indigo-50' : ''}`}
+                                    className={`flex justify-between items-center p-4 ${isCurrentWeek ? 'bg-indigo-50 dark:bg-indigo-950/40' : ''}`}
                                 >
                                     <div className="flex items-center">
                                         <div
-                                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium mr-3 ${isCurrentWeek ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+                                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium mr-3 ${isCurrentWeek ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-gray-200'}`}
                                         >
                                             {item.person.charAt(0)}
                                         </div>
                                         <span className="font-medium">{item.person}</span>
                                     </div>
-                                    <div className="text-gray-500 text-sm">
-                                        <span>Week {item.weekNumber}</span>
+                                    <div className="text-gray-500 text-sm dark:text-gray-400">
+                                        <span>{t('week', { number: item.weekNumber })}</span>
                                         <span className="mx-1">•</span>
                                         <span>{formatWeekendRange(item.date)}</span>
                                     </div>

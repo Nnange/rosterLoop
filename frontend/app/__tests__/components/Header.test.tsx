@@ -5,6 +5,7 @@ import Header from '../../components/Header'
 // Mock Next.js modules — they don't work outside the Next.js runtime
 vi.mock('next/navigation', () => ({
     useRouter: vi.fn(),
+    useParams: () => ({}),
 }))
 
 vi.mock('next/link', () => ({

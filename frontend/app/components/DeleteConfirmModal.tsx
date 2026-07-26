@@ -1,5 +1,8 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+import { useFocusTrap } from '@/app/hooks/useFocusTrap'
+
 interface DeleteConfirmModalProps {
   isOpen: boolean
   householdName: string
@@ -15,6 +18,9 @@ export default function DeleteConfirmModal({
   onConfirm,
   onCancel,
 }: Readonly<DeleteConfirmModalProps>) {
+  const dialogRef = useFocusTrap<HTMLDivElement>(isOpen)
+  const t = useTranslations('DeleteHouseholdModal')
+
   if (!isOpen) return null
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -30,32 +36,37 @@ export default function DeleteConfirmModal({
   }
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-    <div 
-      className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50" 
+    <div
+      className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50"
       onClick={handleBackdropClick}
       onKeyDown={handleKeyDown}
     >
-      <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm mx-4">
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">Delete Household</h2>
-        <p className="text-gray-600 mb-6">
-          Are you sure you want to delete <strong>{householdName}</strong>? This action cannot be undone.
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-household-title"
+        className="bg-white rounded-lg shadow-lg p-6 max-w-sm mx-4 dark:bg-gray-800 dark:shadow-black/40"
+      >
+        <h2 id="delete-household-title" className="text-lg font-semibold text-gray-900 mb-2 dark:text-gray-100">{t('title')}</h2>
+        <p className="text-gray-600 mb-6 dark:text-gray-400">
+          {t('confirm', { name: householdName })}
         </p>
-        
+
         <div className="flex gap-3 justify-end">
           <button
             onClick={onCancel}
             disabled={isDeleting}
-            className="px-4 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
+            className="px-4 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
           >
-            Cancel
+            {t('cancel')}
           </button>
           <button
             onClick={onConfirm}
             disabled={isDeleting}
             className="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
           >
-            {isDeleting ? 'Deleting...' : 'Delete'}
+            {isDeleting ? t('deleting') : t('delete')}
           </button>
         </div>
       </div>

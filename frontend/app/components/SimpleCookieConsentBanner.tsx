@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { Link } from '@/i18n/navigation'
 
 interface CookieConsent {
   essential: boolean
@@ -97,7 +98,7 @@ function CookieBanner({ onAcceptAll, onRejectAll, onSave }: Readonly<CookieBanne
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40 dark:bg-gray-900 dark:border-gray-700 dark:shadow-black/40">
       <div className="max-w-7xl mx-auto px-4 py-6">
         {!showDetails ? (
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -106,22 +107,22 @@ function CookieBanner({ onAcceptAll, onRejectAll, onSave }: Readonly<CookieBanne
               <p className="text-sm text-gray-600">
                 We use essential cookies for authentication. We also offer optional cookies for analytics 
                 to help us improve your experience. You can manage your preferences below or visit our{' '}
-                <a href="/privacy-policy" className="text-blue-600 hover:underline">
+                <Link href="/privacy-policy" className="text-blue-600 hover:underline dark:text-blue-400">
                   Privacy Policy
-                </a>
+                </Link>
                 {'.'}
               </p>
             </div>
             <div className="flex gap-3 flex-wrap">
               <button
                 onClick={() => setShowDetails(true)}
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
               >
                 Settings
               </button>
               <button
                 onClick={onRejectAll}
-                className="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
+                className="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
               >
                 Reject All
               </button>
@@ -138,7 +139,7 @@ function CookieBanner({ onAcceptAll, onRejectAll, onSave }: Readonly<CookieBanne
             <h3 className="font-bold text-lg mb-4">Cookie Preferences</h3>
             <div className="space-y-3 mb-6 max-h-64 overflow-y-auto">
               {/* Essential Cookies */}
-              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg dark:bg-gray-800/60">
                 <input
                   type="checkbox"
                   id="essential"
@@ -150,14 +151,14 @@ function CookieBanner({ onAcceptAll, onRejectAll, onSave }: Readonly<CookieBanne
                   <label htmlFor="essential" className="font-medium block">
                     Essential Cookies ✓ (Required)
                   </label>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     Required for authentication and app functionality. You cannot disable these.
                   </p>
                 </div>
               </div>
 
               {/* Analytics Cookies */}
-              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg dark:bg-gray-800/60">
                 <input
                   type="checkbox"
                   id="analytics"
@@ -169,14 +170,14 @@ function CookieBanner({ onAcceptAll, onRejectAll, onSave }: Readonly<CookieBanne
                   <label htmlFor="analytics" className="font-medium block">
                     Analytics Cookies (Optional)
                   </label>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     Help us understand how you use RosterLoop and improve your experience. No personal data is collected.
                   </p>
                 </div>
               </div>
 
               {/* Marketing Cookies */}
-              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg dark:bg-gray-800/60">
                 <input
                   type="checkbox"
                   id="marketing"
@@ -188,7 +189,7 @@ function CookieBanner({ onAcceptAll, onRejectAll, onSave }: Readonly<CookieBanne
                   <label htmlFor="marketing" className="font-medium block">
                     Marketing Cookies (Optional)
                   </label>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     Allow us to show you personalized content and advertisements based on your interests.
                   </p>
                 </div>
@@ -198,13 +199,13 @@ function CookieBanner({ onAcceptAll, onRejectAll, onSave }: Readonly<CookieBanne
             <div className="flex gap-3 flex-wrap">
               <button
                 onClick={() => setShowDetails(false)}
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
               >
                 Back
               </button>
               <button
                 onClick={onRejectAll}
-                className="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
+                className="px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
               >
                 Reject All
               </button>
