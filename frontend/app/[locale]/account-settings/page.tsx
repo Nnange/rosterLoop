@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from '@/i18n/navigation'
+import { useTranslations } from 'next-intl'
 import { useAuth } from '@/app/context/AuthContext'
 import Header from '@/app/components/Header'
 
@@ -9,6 +10,8 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9092/r
 
 export default function AccountSettingsPage() {
   const router = useRouter()
+  const t = useTranslations('AccountSettings')
+  const tCommon = useTranslations('Common')
   const { user, token, logout, loading, refreshUser } = useAuth()
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -45,7 +48,7 @@ export default function AccountSettingsPage() {
     if (!token) return
 
     if (!firstName.trim() || !lastName.trim()) {
-      setError('First name and last name are required')
+      setError(t('namesRequired'))
       return
     }
 
@@ -64,7 +67,7 @@ export default function AccountSettingsPage() {
       })
 
       if (response.ok) {
-        setSuccess('Profile updated successfully')
+        setSuccess(t('profileUpdated'))
         setEditingProfile(false)
         // Refresh user data
         if (refreshUser) {
@@ -72,10 +75,10 @@ export default function AccountSettingsPage() {
         }
       } else {
         const data = await response.json()
-        setError(data.message || 'Failed to update profile')
+        setError(data.message || t('profileError'))
       }
     } catch (err) {
-      setError('Error updating profile. Please try again.')
+      setError(t('profileErrorGeneric'))
       console.error('Error:', err)
     } finally {
       setIsUpdatingProfile(false)
@@ -86,22 +89,22 @@ export default function AccountSettingsPage() {
     if (!token) return
 
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setError('All password fields are required')
+      setError(t('passwordFieldsRequired'))
       return
     }
 
     if (newPassword !== confirmPassword) {
-      setError('New passwords do not match')
+      setError(t('passwordMismatch'))
       return
     }
 
     if (newPassword.length < 8) {
-      setError('New password must be at least 8 characters long')
+      setError(t('passwordTooShort'))
       return
     }
 
     if (currentPassword === newPassword) {
-      setError('New password must be different from current password')
+      setError(t('passwordSameAsOld'))
       return
     }
 
@@ -120,17 +123,17 @@ export default function AccountSettingsPage() {
       })
 
       if (response.ok) {
-        setSuccess('Password changed successfully')
+        setSuccess(t('passwordChanged'))
         setShowChangePassword(false)
         setCurrentPassword('')
         setNewPassword('')
         setConfirmPassword('')
       } else {
         const data = await response.json()
-        setError(data.message || 'Failed to change password')
+        setError(data.message || t('passwordError'))
       }
     } catch (err) {
-      setError('Error changing password. Please try again.')
+      setError(t('passwordErrorGeneric'))
       console.error('Error:', err)
     } finally {
       setIsChangingPassword(false)
@@ -164,10 +167,10 @@ export default function AccountSettingsPage() {
         setShouldRedirect(true)
       } else {
         const data = await response.json()
-        setError(data.message || 'Failed to delete account')
+        setError(data.message || t('deleteError'))
       }
     } catch (err) {
-      setError('Error deleting account. Please try again.')
+      setError(t('deleteErrorGeneric'))
       console.error('Error:', err)
     } finally {
       setIsDeleting(false)
@@ -179,7 +182,7 @@ export default function AccountSettingsPage() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center dark:from-gray-900 dark:to-gray-950">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4 dark:border-indigo-400"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+          <p className="text-gray-600 dark:text-gray-400">{tCommon('loading')}</p>
         </div>
       </div>
     )
@@ -195,25 +198,25 @@ export default function AccountSettingsPage() {
 
       <main id="main-content" className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white rounded-lg shadow-md p-8 dark:bg-gray-800 dark:shadow-black/30">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8 dark:text-gray-100">Account Settings</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-8 dark:text-gray-100">{t('title')}</h1>
 
           <div className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4 dark:text-gray-100">Account Information</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4 dark:text-gray-100">{t('accountInfo')}</h2>
             <div className="bg-gray-50 rounded-lg p-4 space-y-3 dark:bg-gray-700/40">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Email</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{t('email')}</p>
                 <p className="font-medium text-gray-900 dark:text-gray-100">{user.email}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Name</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{t('name')}</p>
                 <p className="font-medium text-gray-900 dark:text-gray-100">
                   {user.firstName} {user.lastName}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Role</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{t('role')}</p>
                 <p className="font-medium text-gray-900 dark:text-gray-100">
-                  {user.role === 'ROLE_ADMIN' ? 'Administrator' : 'Member'}
+                  {user.role === 'ROLE_ADMIN' ? t('roleAdmin') : t('roleMember')}
                 </p>
               </div>
             </div>
@@ -226,12 +229,12 @@ export default function AccountSettingsPage() {
           )}
 
           <div className="mb-8 border-t border-gray-200 pt-8 dark:border-gray-700">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4 dark:text-gray-100">Edit Profile</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4 dark:text-gray-100">{t('editProfile')}</h2>
             {editingProfile ? (
               <div className="space-y-4">
                 <div>
                   <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
-                    First Name
+                    {t('firstName')}
                   </label>
                   <input
                     id="firstName"
@@ -244,7 +247,7 @@ export default function AccountSettingsPage() {
                 </div>
                 <div>
                   <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
-                    Last Name
+                    {t('lastName')}
                   </label>
                   <input
                     id="lastName"
@@ -261,7 +264,7 @@ export default function AccountSettingsPage() {
                     disabled={isUpdatingProfile}
                     className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors font-medium"
                   >
-                    {isUpdatingProfile ? 'Saving...' : 'Save Changes'}
+                    {isUpdatingProfile ? t('saving') : tCommon('save')}
                   </button>
                   <button
                     onClick={() => {
@@ -273,7 +276,7 @@ export default function AccountSettingsPage() {
                     disabled={isUpdatingProfile}
                     className="px-4 py-2 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 disabled:opacity-50 transition-colors font-medium dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
                   >
-                    Cancel
+                    {tCommon('cancel')}
                   </button>
                 </div>
               </div>
@@ -282,18 +285,18 @@ export default function AccountSettingsPage() {
                 onClick={() => setEditingProfile(true)}
                 className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
               >
-                Edit Name
+                {t('editName')}
               </button>
             )}
           </div>
 
           <div className="mb-8 border-t border-gray-200 pt-8 dark:border-gray-700">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4 dark:text-gray-100">Password</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4 dark:text-gray-100">{t('password')}</h2>
             {showChangePassword ? (
               <div className="space-y-4">
                 <div>
                   <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
-                    Current Password
+                    {t('currentPassword')}
                   </label>
                   <input
                     id="currentPassword"
@@ -307,7 +310,7 @@ export default function AccountSettingsPage() {
                 </div>
                 <div>
                   <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
-                    New Password
+                    {t('newPassword')}
                   </label>
                   <input
                     id="newPassword"
@@ -321,7 +324,7 @@ export default function AccountSettingsPage() {
                 </div>
                 <div>
                   <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
-                    Confirm New Password
+                    {t('confirmNewPassword')}
                   </label>
                   <input
                     id="confirmPassword"
@@ -333,14 +336,14 @@ export default function AccountSettingsPage() {
                     disabled={isChangingPassword}
                   />
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Password must be at least 8 characters long.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{t('passwordHint')}</p>
                 <div className="flex gap-3">
                   <button
                     onClick={handleChangePassword}
                     disabled={isChangingPassword}
                     className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors font-medium"
                   >
-                    {isChangingPassword ? 'Changing...' : 'Change Password'}
+                    {isChangingPassword ? t('changingPassword') : t('changePassword')}
                   </button>
                   <button
                     onClick={() => {
@@ -353,7 +356,7 @@ export default function AccountSettingsPage() {
                     disabled={isChangingPassword}
                     className="px-4 py-2 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 disabled:opacity-50 transition-colors font-medium dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
                   >
-                    Cancel
+                    {tCommon('cancel')}
                   </button>
                 </div>
               </div>
@@ -362,23 +365,23 @@ export default function AccountSettingsPage() {
                 onClick={() => setShowChangePassword(true)}
                 className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
               >
-                Change Password
+                {t('changePassword')}
               </button>
             )}
           </div>
 
           <div className="border-t border-gray-200 pt-8 dark:border-gray-700">
             <h2 className="text-xl font-semibold mb-4 text-red-600 dark:text-red-400">
-              Danger Zone
+              {t('dangerZone')}
             </h2>
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 dark:bg-red-950/30 dark:border-red-900">
               <p className="text-sm text-gray-600 mb-4 dark:text-gray-300">
-                Deleting your account is permanent and cannot be undone. This will:
+                {t('deleteIntro')}
               </p>
               <ul className="list-disc list-inside text-sm text-gray-600 space-y-1 mb-4 dark:text-gray-300">
-                <li>Remove your account and all associated data</li>
-                <li>Remove you from all households</li>
-                <li>Cancel any pending invitations</li>
+                <li>{t('deleteItem1')}</li>
+                <li>{t('deleteItem2')}</li>
+                <li>{t('deleteItem3')}</li>
               </ul>
 
               {error && (
@@ -390,7 +393,7 @@ export default function AccountSettingsPage() {
               {showDeleteConfirm ? (
                 <div className="space-y-3">
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                    Are you absolutely sure? This action cannot be undone.
+                    {t('deleteConfirmPrompt')}
                   </p>
                   <div className="flex gap-3">
                     <button
@@ -398,14 +401,14 @@ export default function AccountSettingsPage() {
                       disabled={isDeleting}
                       className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
                     >
-                      {isDeleting ? 'Deleting...' : 'Yes, Delete My Account'}
+                      {isDeleting ? t('deleting') : t('deleteConfirm')}
                     </button>
                     <button
                       onClick={() => setShowDeleteConfirm(false)}
                       disabled={isDeleting}
                       className="px-4 py-2 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600"
                     >
-                      Cancel
+                      {tCommon('cancel')}
                     </button>
                   </div>
                 </div>
@@ -414,7 +417,7 @@ export default function AccountSettingsPage() {
                   onClick={() => setShowDeleteConfirm(true)}
                   className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
                 >
-                  Delete Account
+                  {t('deleteAccount')}
                 </button>
               )}
             </div>

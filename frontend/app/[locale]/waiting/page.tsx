@@ -3,12 +3,14 @@
 import { useEffect } from 'react'
 import { useRouter } from '@/i18n/navigation'
 import { useAuth } from '@/app/context/AuthContext'
+import { useTranslations } from 'next-intl'
 import { isAdmin } from '@/app/utils/roleUtils'
 import Header from '@/app/components/Header'
 
 export default function WaitingPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const t = useTranslations('Waiting')
 
   useEffect(() => {
     if (!loading && !user) {
@@ -21,7 +23,7 @@ export default function WaitingPage() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center dark:from-gray-900 dark:to-gray-950">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4 dark:border-indigo-400"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+          <p className="text-gray-600 dark:text-gray-400">{t('loading')}</p>
         </div>
       </div>
     )
@@ -60,22 +62,22 @@ export default function WaitingPage() {
         </div>
 
         <h1 className="text-2xl font-bold text-gray-900 mb-2 dark:text-gray-100">
-          Welcome, {user.firstName}!
+          {t('welcome', { name: user.firstName })}
         </h1>
 
         <p className="text-gray-600 mb-4 dark:text-gray-400">
-          The household roster is being set up by your admin. Once it's ready, you'll be able to see your cleaning schedule here.
+          {t('body')}
         </p>
 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 dark:bg-blue-950/40 dark:border-blue-900">
           <p className="text-sm text-blue-800 dark:text-blue-300">
-            <strong>Tip:</strong> You can log out and come back later to check if the roster is ready.
+            <strong>{t('tip')}</strong> {t('tipBody')}
           </p>
         </div>
 
         <div className="space-y-3">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Your Email: <span className="font-semibold text-gray-700 dark:text-gray-200">{user.email}</span>
+            {t('yourEmail')} <span className="font-semibold text-gray-700 dark:text-gray-200">{user.email}</span>
           </p>
         </div>
         </div>

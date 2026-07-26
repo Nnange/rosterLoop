@@ -3,12 +3,14 @@
 import { useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/app/context/AuthContext";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { isAdmin } from "@/app/utils/roleUtils";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9092/rosterloop/api';
 
 export default function Home() {
   const router = useRouter();
+  const t = useTranslations("Common");
   const { user, token, loading } = useAuth();
   const [redirecting, setRedirecting] = useState(false);
   const [membershipChecked, setMembershipChecked] = useState(false);
@@ -76,7 +78,7 @@ export default function Home() {
     return (
       <div className="flex flex-col min-h-screen items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Loading...</h1>
+          <h1 className="text-2xl font-bold mb-4">{t('loading')}</h1>
         </div>
       </div>
     );

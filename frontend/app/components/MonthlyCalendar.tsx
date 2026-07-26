@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { getWeekIndexFromStartDate } from '../utils/scheduleGenerator'
+import { useTranslations } from 'next-intl'
+import { getWeekIndexFromStartDate, getWeekendSaturday } from '../utils/scheduleGenerator'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 
 interface MonthlyCalendarProps {
@@ -16,6 +17,7 @@ export function MonthlyCalendar({
   schedule,
   currentWeekIndex,
 }: Readonly<MonthlyCalendarProps>) {
+  const t = useTranslations('Calendar')
   const today = new Date()
   const [displayMonth, setDisplayMonth] = useState(today.getMonth())
   const [displayYear, setDisplayYear] = useState(today.getFullYear())
@@ -35,26 +37,10 @@ export function MonthlyCalendar({
   // Get person on duty for a specific date
   const getPersonForDate = (date: Date): string | null => {
     if (schedule.length === 0) return null
-    
-    // Find the Saturday of the week containing this date
-    // Saturday is day 6, Sunday is day 0
-    const dayOfWeek = date.getDay()
-    const saturday = new Date(date)
-    
-    if (dayOfWeek === 0) {
-      // If it's Sunday, get Saturday from the SAME week (go back 1 day)
-      saturday.setDate(date.getDate() - 1)
-    } else if (dayOfWeek === 6) {
-      // If it's Saturday, use this date
-      // (no change needed)
-    } else {
-      // For other weekdays, calculate forward to Saturday
-      const daysUntilSaturday = 6 - dayOfWeek
-      saturday.setDate(date.getDate() + daysUntilSaturday)
-    }
-    
-    saturday.setHours(0, 0, 0, 0)
-    
+
+    // Find the Saturday of the weekend containing this date
+    const saturday = getWeekendSaturday(date)
+
     // Find the schedule item with matching Saturday date
     const scheduleItem = schedule.find((item) => {
       const itemDate = new Date(item.date)
@@ -104,7 +90,7 @@ export function MonthlyCalendar({
           <button
             onClick={goToPreviousMonth}
             className="p-1 md:p-2 hover:bg-gray-100 rounded-lg transition-colors dark:hover:bg-gray-700"
-            aria-label="Previous month"
+            aria-label={t('previousMonth')}
           >
             <ChevronLeftIcon className="w-4 h-4 md:w-5 md:h-5" />
           </button>
@@ -112,12 +98,12 @@ export function MonthlyCalendar({
             onClick={goToToday}
             className="px-2 md:px-3 py-1 text-xs md:text-sm hover:bg-gray-100 rounded-lg transition-colors whitespace-nowrap dark:hover:bg-gray-700"
           >
-            Today
+            {t('today')}
           </button>
           <button
             onClick={goToNextMonth}
             className="p-1 md:p-2 hover:bg-gray-100 rounded-lg transition-colors dark:hover:bg-gray-700"
-            aria-label="Next month"
+            aria-label={t('nextMonth')}
           >
             <ChevronRightIcon className="w-4 h-4 md:w-5 md:h-5" />
           </button>
@@ -125,12 +111,12 @@ export function MonthlyCalendar({
       </div>
       {/* Day headers */}
       <div className="grid grid-cols-7 gap-1 md:gap-2 mb-1 md:mb-2">
-        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+        {(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const).map((day) => (
           <div
             key={day}
             className="text-center text-xs md:text-sm font-medium text-gray-500 py-1 md:py-2 dark:text-gray-400"
           >
-            {day}
+            {t(day)}
           </div>
         ))}
       </div>
@@ -194,11 +180,11 @@ export function MonthlyCalendar({
       <div className="mt-3 md:mt-4 flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 text-xs md:text-sm text-gray-600 dark:text-gray-400">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 md:w-4 md:h-4 bg-indigo-600 rounded"></div>
-          <span>Today</span>
+          <span>{t('today')}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 md:w-4 md:h-4 bg-indigo-200 border border-indigo-400 rounded dark:bg-indigo-900/60 dark:border-indigo-700"></div>
-          <span>Current Week</span>
+          <span>{t('currentWeek')}</span>
         </div>
       </div>
     </div>

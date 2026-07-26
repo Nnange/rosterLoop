@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from '@/i18n/navigation'
+import { useTranslations } from 'next-intl'
 import { useAuth } from '@/app/context/AuthContext'
 import { SetupForm } from '@/app/components/SetupForm'
 import { isAdmin } from '@/app/utils/roleUtils'
@@ -13,6 +14,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9092/r
 export default function SetupPage() {
   const { user, token, loading } = useAuth()
   const router = useRouter()
+  const t = useTranslations('Setup')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
 
@@ -30,7 +32,7 @@ export default function SetupPage() {
     return (
       <div className="flex flex-col min-h-screen items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Loading...</h1>
+          <h1 className="text-2xl font-bold mb-4">{t('loading')}</h1>
         </div>
       </div>
     )
@@ -65,12 +67,12 @@ export default function SetupPage() {
       } else {
         const errorData = await response.text()
         console.error('Error response:', response.status, errorData)
-        setError(`Failed to create household (${response.status})`)
+        setError(t('errorCreate', { status: response.status }))
       }
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Unknown error'
       console.error('Error creating household:', errorMsg)
-      setError(`Error: ${errorMsg}`)
+      setError(t('errorGeneric', { message: errorMsg }))
     } finally {
       setIsSubmitting(false)
     }
@@ -82,7 +84,7 @@ export default function SetupPage() {
 
       <div id="main-content" className="max-w-2xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-gray-100">
-          Create New Household
+          {t('title')}
         </h1>
         {error && (
           <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex justify-between items-center dark:bg-red-950/40 dark:border-red-800 dark:text-red-300">

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
+import { useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/navigation';
 import { isAdmin } from '@/app/utils/roleUtils';
 import Header from '@/app/components/Header';
@@ -23,6 +24,7 @@ interface Household {
 export default function HouseholdsPage() {
   const { user, token, loading: authLoading } = useAuth();
   const router = useRouter();
+  const t = useTranslations('Households');
   const [households, setHouseholds] = useState<Household[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -70,10 +72,10 @@ export default function HouseholdsPage() {
       } else if (response.status === 401) {
         router.push('/login');
       } else {
-        setError('Failed to load households');
+        setError(t('errorLoad'));
       }
     } catch (err) {
-      setError('Error fetching households');
+      setError(t('errorFetch'));
       console.error('Fetch error:', err);
     } finally {
       setLoading(false);
@@ -119,7 +121,7 @@ export default function HouseholdsPage() {
         setInviteModalOpen(false);
         setHouseholdToInvite(null);
         setError('');
-        setSuccess('Invitation sent successfully!');
+        setSuccess(t('inviteSuccess'));
         // Clear success message after 5 seconds
         setTimeout(() => setSuccess(''), 5000);
       } else {
@@ -170,7 +172,7 @@ export default function HouseholdsPage() {
         setError(errorMessage);
       }
     } catch (err) {
-      setError('Error deleting household');
+      setError(t('errorDelete'));
       console.error('Delete error:', err);
     } finally {
       setIsDeleting(false);
@@ -189,7 +191,7 @@ export default function HouseholdsPage() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center dark:from-gray-900 dark:to-gray-950">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4 dark:border-indigo-400"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading households...</p>
+          <p className="text-gray-600 dark:text-gray-400">{t('loading')}</p>
         </div>
       </div>
     );
@@ -206,7 +208,7 @@ export default function HouseholdsPage() {
       {/* Main Content */}
       <main id="main-content" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 className="text-4xl font-bold text-gray-900 mb-8 dark:text-gray-100">
-          {isAdmin(user?.role) ? 'My Households' : 'Households'}
+          {isAdmin(user?.role) ? t('titleAdmin') : t('title')}
         </h1>
 
         {error && (
@@ -240,25 +242,25 @@ export default function HouseholdsPage() {
             {isAdmin(user?.role) ? (
               <>
                 <h2 className="text-2xl font-semibold text-gray-900 mb-2 dark:text-gray-100">
-                  No Households Yet
+                  {t('noHouseholdsAdminTitle')}
                 </h2>
                 <p className="text-gray-600 mb-6 dark:text-gray-400">
-                  You don't have any households set up. Create one to get started!
+                  {t('noHouseholdsAdminBody')}
                 </p>
                 <Link
                   href="/setup"
                   className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
                 >
-                  Create Household
+                  {t('createHousehold')}
                 </Link>
               </>
             ) : (
               <>
                 <h2 className="text-2xl font-semibold text-gray-900 mb-2 dark:text-gray-100">
-                  No Households
+                  {t('noHouseholdsTitle')}
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400">
-                  You haven't been invited to any households yet. Ask a household admin to invite you!
+                  {t('noHouseholdsBody')}
                 </p>
               </>
             )}
@@ -281,7 +283,7 @@ export default function HouseholdsPage() {
 
                     {household.flatmateNames && household.flatmateNames.length > 0 && (
                       <div className="mb-4 pb-3 border-b border-gray-200 dark:border-gray-700">
-                        <p className="text-xs text-gray-600 font-medium mb-1 dark:text-gray-400">Flatmates:</p>
+                        <p className="text-xs text-gray-600 font-medium mb-1 dark:text-gray-400">{t('flatmates')}</p>
                         <div className="flex flex-wrap gap-1">
                           {household.flatmateNames.map((name) => (
                             <span
@@ -301,15 +303,15 @@ export default function HouseholdsPage() {
                           <button
                             onClick={() => openShareLinkModal(household)}
                             className="px-3 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
-                            title="Generate shareable link for this household"
+                            title={t('shareTitle')}
                           >
-                            Share
+                            {t('share')}
                           </button>
                           <button
                             onClick={() => openInviteModal(household)}
                             className="px-3 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
                           >
-                            Invite
+                            {t('invite')}
                           </button>
                           <button
                             onClick={() => {
@@ -318,19 +320,19 @@ export default function HouseholdsPage() {
                             }}
                             className="px-3 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
                           >
-                            Members
+                            {t('members')}
                           </button>
                           <Link
                             href={`/households/${household.id}/edit`}
                             className="px-3 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                           >
-                            Edit
+                            {t('edit')}
                           </Link>
                           <button
                             onClick={() => openDeleteModal(household)}
                             className="px-3 py-2 bg-gray-100 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors dark:bg-gray-700 dark:text-red-400 dark:hover:bg-red-950/40"
                           >
-                            Delete
+                            {t('delete')}
                           </button>
                         </>
                       )}
@@ -338,7 +340,7 @@ export default function HouseholdsPage() {
                         href={`/roster/${household.id}`}
                         className="px-3 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
                       >
-                        View
+                        {t('view')}
                       </Link>
                     </div>
                   </div>
@@ -349,17 +351,16 @@ export default function HouseholdsPage() {
             {isAdmin(user?.role) && (
               <div className="bg-white rounded-lg shadow-md p-8 text-center dark:bg-gray-800 dark:shadow-black/30">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-2 dark:text-gray-100">
-                  Add Another Household?
+                  {t('addAnotherTitle')}
                 </h2>
                 <p className="text-gray-600 mb-6 dark:text-gray-400">
-                  Create an additional household to manage another cleaning
-                  schedule
+                  {t('addAnotherBody')}
                 </p>
                 <Link
                   href="/setup"
                   className="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
                 >
-                  Create New Household
+                  {t('createNew')}
                 </Link>
               </div>
             )}
@@ -399,7 +400,7 @@ export default function HouseholdsPage() {
           setHouseholdForMembers(null);
         }}
         onMemberRemoved={() => {
-          setSuccess('Member removed successfully');
+          setSuccess(t('memberRemoved'));
           setTimeout(() => setSuccess(''), 5000);
         }}
       />

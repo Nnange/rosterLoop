@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { useFocusTrap } from '@/app/hooks/useFocusTrap'
 
 interface DeleteConfirmModalProps {
@@ -18,6 +19,7 @@ export default function DeleteConfirmModal({
   onCancel,
 }: Readonly<DeleteConfirmModalProps>) {
   const dialogRef = useFocusTrap<HTMLDivElement>(isOpen)
+  const t = useTranslations('DeleteHouseholdModal')
 
   if (!isOpen) return null
 
@@ -46,9 +48,9 @@ export default function DeleteConfirmModal({
         aria-labelledby="delete-household-title"
         className="bg-white rounded-lg shadow-lg p-6 max-w-sm mx-4 dark:bg-gray-800 dark:shadow-black/40"
       >
-        <h2 id="delete-household-title" className="text-lg font-semibold text-gray-900 mb-2 dark:text-gray-100">Delete Household</h2>
+        <h2 id="delete-household-title" className="text-lg font-semibold text-gray-900 mb-2 dark:text-gray-100">{t('title')}</h2>
         <p className="text-gray-600 mb-6 dark:text-gray-400">
-          Are you sure you want to delete <strong>{householdName}</strong>? This action cannot be undone.
+          {t('confirm', { name: householdName })}
         </p>
 
         <div className="flex gap-3 justify-end">
@@ -57,14 +59,14 @@ export default function DeleteConfirmModal({
             disabled={isDeleting}
             className="px-4 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
           >
-            Cancel
+            {t('cancel')}
           </button>
           <button
             onClick={onConfirm}
             disabled={isDeleting}
             className="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
           >
-            {isDeleting ? 'Deleting...' : 'Delete'}
+            {isDeleting ? t('deleting') : t('delete')}
           </button>
         </div>
       </div>

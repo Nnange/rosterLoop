@@ -25,6 +25,27 @@ export function generateYearlySchedule(
     }
     return schedule
 }
+// Get the Saturday of the weekend that a given date belongs to, at local
+// midnight. Sunday belongs to the same weekend's Saturday (the day before);
+// any other weekday maps forward to the upcoming Saturday. This is the single
+// source of truth for mapping a date to its schedule weekend, used by both the
+// calendar and the "This Weekend" panel so they never disagree.
+export function getWeekendSaturday(date: Date): Date {
+    const saturday = new Date(date)
+    const dayOfWeek = date.getDay()
+
+    if (dayOfWeek === 0) {
+        // Sunday: go back one day to Saturday
+        saturday.setDate(date.getDate() - 1)
+    } else if (dayOfWeek !== 6) {
+        // Weekday: go forward to Saturday (Saturday itself needs no change)
+        saturday.setDate(date.getDate() + (6 - dayOfWeek))
+    }
+
+    saturday.setHours(0, 0, 0, 0)
+    return saturday
+}
+
 // Get the next Saturday
 export function getNextSaturday(date: Date): Date {
     const resultDate = new Date(date)
