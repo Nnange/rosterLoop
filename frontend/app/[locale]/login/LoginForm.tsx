@@ -9,13 +9,19 @@ import { useAuth } from '@/app/context/AuthContext'
 export default function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { login, loading, error } = useAuth()
+  const { login, error } = useAuth()
   const t = useTranslations('Login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [formError, setFormError] = useState<string | null>(null)
   const [failedAttempts, setFailedAttempts] = useState(0)
   const [showForgotPassword, setShowForgotPassword] = useState(false)
+  // Local submitting state for the login request. Deliberately not the
+  // AuthContext `loading` flag: that starts `true` during the mount-time auth
+  // bootstrap, which would disable the form on first paint and cause an SSR/
+  // client hydration mismatch (server snapshots loading=true, client hydrates
+  // after the provider effect sets it false).
+  const [submitting, setSubmitting] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -26,6 +32,7 @@ export default function LoginForm() {
       return
     }
 
+    setSubmitting(true)
     try {
       await login(email, password)
       setFailedAttempts(0)
@@ -35,12 +42,14 @@ export default function LoginForm() {
     } catch (err) {
       const newFailedAttempts = failedAttempts + 1
       setFailedAttempts(newFailedAttempts)
-      
+
       if (newFailedAttempts >= 3) {
         setShowForgotPassword(true)
       }
-      
+
       setFormError(err instanceof Error ? err.message : t('errorFailed'))
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -71,7 +80,7 @@ export default function LoginForm() {
             onChange={(e) => setEmail(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
             placeholder={t('emailPlaceholder')}
-            disabled={loading}
+            disabled={submitting}
           />
         </div>
 
@@ -86,16 +95,16 @@ export default function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
             placeholder="••••••••"
-            disabled={loading}
+            disabled={submitting}
           />
         </div>
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={submitting}
           className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition-colors disabled:bg-gray-400"
         >
-          {loading ? t('submitting') : t('submit')}
+          {submitting ? t('submitting') : t('submit')}
         </button>
       </form>
 

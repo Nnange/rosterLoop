@@ -70,17 +70,24 @@ describe('LoginForm', () => {
             expect(screen.getByRole('button', { name: 'Login' })).toBeInTheDocument()
         })
 
-        it('shows "Logging in..." and disables the button while loading', () => {
-            setupMocks({ loading: true })
+        it('shows "Logging in..." and disables the button while a login request is in flight', async () => {
+            let resolveLogin!: () => void
+            mockLogin.mockReturnValue(new Promise<void>((resolve) => { resolveLogin = resolve }))
             render(<LoginForm />)
-            expect(screen.getByRole('button', { name: 'Logging in...' })).toBeDisabled()
+            await fillAndSubmit()
+            expect(await screen.findByRole('button', { name: 'Logging in...' })).toBeDisabled()
+            resolveLogin()
         })
 
-        it('disables inputs while loading', () => {
-            setupMocks({ loading: true })
+        it('disables inputs while a login request is in flight', async () => {
+            let resolveLogin!: () => void
+            mockLogin.mockReturnValue(new Promise<void>((resolve) => { resolveLogin = resolve }))
             render(<LoginForm />)
+            await fillAndSubmit()
+            await screen.findByRole('button', { name: 'Logging in...' })
             expect(screen.getByLabelText('Email')).toBeDisabled()
             expect(screen.getByLabelText('Password')).toBeDisabled()
+            resolveLogin()
         })
 
         it('shows the sign up link', () => {

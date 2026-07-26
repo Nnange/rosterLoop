@@ -26,7 +26,9 @@ describe('DeleteConfirmModal', () => {
     describe('content', () => {
         it('shows the household name in the confirmation message', () => {
             render(<DeleteConfirmModal {...defaultProps} />)
-            expect(screen.getByText('Flat 4B')).toBeInTheDocument()
+            // The name is interpolated into the confirmation sentence, so match
+            // it as a substring rather than a standalone text node.
+            expect(screen.getByText(/Flat 4B/)).toBeInTheDocument()
         })
 
         it('shows "Delete" on the confirm button when not deleting', () => {

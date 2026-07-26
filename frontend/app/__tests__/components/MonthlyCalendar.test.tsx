@@ -1,8 +1,10 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MonthlyCalendar } from '../../components/MonthlyCalendar'
 
-// May 2026 Saturdays (2026-05-14 is a Thursday per system date)
+// May 2026 Saturdays. The calendar defaults to the current month, so the tests
+// pin the system clock to May 2026 (below) to keep the mock schedule's dates on
+// screen and the suite deterministic regardless of the real date.
 const MAY_2_SAT = new Date(2026, 4, 2)   // May 2
 const MAY_9_SAT = new Date(2026, 4, 9)   // May 9
 const MAY_16_SAT = new Date(2026, 4, 16) // May 16
@@ -14,6 +16,15 @@ const mockSchedule = [
 ]
 
 describe('MonthlyCalendar', () => {
+    beforeEach(() => {
+        vi.useFakeTimers()
+        vi.setSystemTime(new Date(2026, 4, 14)) // Thu, May 14 2026
+    })
+
+    afterEach(() => {
+        vi.useRealTimers()
+    })
+
     describe('structure', () => {
         it('renders all seven day-of-week headers', () => {
             render(<MonthlyCalendar schedule={[]} currentWeekIndex={0} />)

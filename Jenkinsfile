@@ -37,6 +37,29 @@ pipeline {
             }
         }
 
+        stage('Test') {
+            steps {
+                // Run tests before building the images so a failing test blocks
+                // the build and deploy.
+                dir(FRONTEND_DIR) {
+                    sh 'npm ci'
+                    sh 'npm run test:run -- --reporter=default --reporter=junit --outputFile=test-results/vitest-junit.xml'
+                }
+                dir(BACKEND_DIR) {
+                    // Unit tests only. RosterloopApplicationTests is a @SpringBootTest
+                    // that boots the full context (needs a DB), so it is excluded here.
+                    sh "mvn test -Dtest='!RosterloopApplicationTests'"
+                }
+            }
+            post {
+                // Publish results now, before the Build Backend stage's `mvn clean`
+                // wipes target/surefire-reports.
+                always {
+                    junit allowEmptyResults: true, testResults: "${FRONTEND_DIR}/test-results/*.xml, ${BACKEND_DIR}/target/surefire-reports/*.xml"
+                }
+            }
+        }
+
         stage('Frontend Build') {
             steps {
                 dir(FRONTEND_DIR) {
@@ -48,7 +71,7 @@ pipeline {
                         ]
                         def apiUrl = apiUrls[params.PROFILE] ?: apiUrls['dev']
 
-                        sh 'npm install'
+                        // node_modules is installed in the Test stage (same workspace).
                         sh 'npm run build'
                         sh "docker build --build-arg NEXT_PUBLIC_API_URL=${apiUrl} -t rosterloop-frontend:${IMAGE_TAG} -t ${FRONTEND_IMAGE} ."
                     }

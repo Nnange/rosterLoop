@@ -9,7 +9,7 @@ import { useAuth } from '@/app/context/AuthContext'
 export default function SignupForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { signup, loading, error } = useAuth()
+  const { signup, error } = useAuth()
   const t = useTranslations('Signup')
   const [formData, setFormData] = useState({
     email: '',
@@ -19,6 +19,12 @@ export default function SignupForm() {
     lastName: '',
   })
   const [formError, setFormError] = useState<string | null>(null)
+  // Local submitting state for the signup request. Deliberately not the
+  // AuthContext `loading` flag: that starts `true` during the mount-time auth
+  // bootstrap, which would disable the form on first paint and cause an SSR/
+  // client hydration mismatch (server snapshots loading=true, client hydrates
+  // after the provider effect sets it false).
+  const [submitting, setSubmitting] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -49,6 +55,7 @@ export default function SignupForm() {
       return
     }
 
+    setSubmitting(true)
     try {
       await signup(formData.email, formData.password, formData.firstName, formData.lastName)
       const redirectUrl = searchParams.get('redirect')
@@ -63,6 +70,8 @@ export default function SignupForm() {
       }
     } catch (err) {
       setFormError(err instanceof Error ? err.message : t('errorFailed'))
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -94,7 +103,7 @@ export default function SignupForm() {
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
             placeholder="John"
-            disabled={loading}
+            disabled={submitting}
           />
         </div>
 
@@ -110,7 +119,7 @@ export default function SignupForm() {
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
             placeholder="Doe"
-            disabled={loading}
+            disabled={submitting}
           />
         </div>
 
@@ -126,7 +135,7 @@ export default function SignupForm() {
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
             placeholder={t('emailPlaceholder')}
-            disabled={loading}
+            disabled={submitting}
           />
         </div>
 
@@ -142,7 +151,7 @@ export default function SignupForm() {
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
             placeholder="••••••••"
-            disabled={loading}
+            disabled={submitting}
           />
         </div>
 
@@ -158,16 +167,16 @@ export default function SignupForm() {
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder-gray-500"
             placeholder="••••••••"
-            disabled={loading}
+            disabled={submitting}
           />
         </div>
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={submitting}
           className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition-colors disabled:bg-gray-400"
         >
-          {loading ? t('submitting') : t('submit')}
+          {submitting ? t('submitting') : t('submit')}
         </button>
       </form>
 
