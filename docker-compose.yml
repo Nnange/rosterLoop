@@ -18,7 +18,7 @@ services:
       - "9092:9092"
     restart: unless-stopped
     networks:
-      - football_football-network
+      - rosterloop_network
 
   frontend:
     image: rosterloop-frontend:latest
@@ -32,8 +32,8 @@ services:
       - "3002:3000"
     restart: unless-stopped
     networks:
-      - football_football-network
+      - rosterloop_network
 
 networks:
-  football_football-network:
+  rosterloop_network:
     external: true
